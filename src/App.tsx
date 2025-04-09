@@ -15,6 +15,7 @@ import Membership from "./pages/Membership";
 import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -24,22 +25,28 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/gyms" element={<Gyms />} />
-            <Route path="/transformations" element={<Transformations />} />
-            <Route path="/trainers" element={<Trainers />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/contact" element={<Contact />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
+        <Routes>
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="*" element={
+            <>
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/gyms" element={<Gyms />} />
+                  <Route path="/transformations" element={<Transformations />} />
+                  <Route path="/trainers" element={<Trainers />} />
+                  <Route path="/membership" element={<Membership />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
+          } />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
