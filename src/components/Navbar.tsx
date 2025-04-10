@@ -54,7 +54,7 @@ const Navbar = () => {
     >
       <div className="container-custom flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <h1 className="text-rebuild-yellow text-3xl">REBUILD</h1>
+          <h1 className="text-rebuild-yellow text-3xl">REBUILD.FIT</h1>
         </Link>
 
         {/* Desktop Navigation */}
