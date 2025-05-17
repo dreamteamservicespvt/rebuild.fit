@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CTASection from '@/components/CTASection';
 import { Shield, Target, Clock, Heart } from 'lucide-react';
@@ -197,7 +196,7 @@ const About = () => {
         </div>
       </section>
       
-      {/* Milestones */}
+      {/* Milestones - Modified to focus on Premium Gym */}
       <section className="py-16 md:py-20 bg-rebuild-darkgray relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-5 bg-gym-texture" />
@@ -207,7 +206,7 @@ const About = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">OUR JOURNEY</h2>
             <div className="w-20 h-1 bg-rebuild-yellow mx-auto mb-6" />
             <p className="max-w-2xl mx-auto text-gray-300">
-              The growth of Rebuild Gym from a small idea to a thriving fitness ecosystem
+              The growth of Rebuild Gym from a small idea to a thriving fitness center
             </p>
           </div>
           
@@ -221,7 +220,7 @@ const About = () => {
               <h3 className="text-rebuild-yellow font-bold text-xl mb-2">2018</h3>
               <h4 className="text-xl font-bold mb-3">The Beginning</h4>
               <p className="text-gray-300 mb-2">
-                Sagar Akula founded the first Rebuild Gym location as a small personal training studio, focusing exclusively on natural transformation methods.
+                Sagar Akula founded Rebuild Gym as a small personal training studio, focusing exclusively on natural transformation methods.
               </p>
               <img 
                 src="https://images.unsplash.com/photo-1576678927484-cc907957088c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80"
@@ -236,30 +235,13 @@ const About = () => {
                 <div className="w-4 h-4 bg-rebuild-yellow rounded-full"></div>
               </div>
               <h3 className="text-rebuild-yellow font-bold text-xl mb-2">2020</h3>
-              <h4 className="text-xl font-bold mb-3">Women's Only Branch</h4>
+              <h4 className="text-xl font-bold mb-3">Facility Expansion</h4>
               <p className="text-gray-300 mb-2">
-                Recognizing the need for a dedicated women's fitness space, we opened our second branch with female trainers and specialized programs.
+                Our gym expanded with additional equipment, specialized training areas, and improved facilities to accommodate our growing member base.
               </p>
               <img 
-                src="https://images.unsplash.com/photo-1518310383802-640c2de311b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-                alt="Women's Only Branch"
-                className="mt-4 rounded-lg w-full max-w-md"
-              />
-            </div>
-            
-            {/* 2022 */}
-            <div className="relative">
-              <div className="absolute -left-[41px] p-1 bg-rebuild-black border-2 border-rebuild-yellow rounded-full">
-                <div className="w-4 h-4 bg-rebuild-yellow rounded-full"></div>
-              </div>
-              <h3 className="text-rebuild-yellow font-bold text-xl mb-2">2022</h3>
-              <h4 className="text-xl font-bold mb-3">Student-Focused Gym</h4>
-              <p className="text-gray-300 mb-2">
-                We launched our third branch, a budget-friendly gym for students with high-energy group classes and essential equipment.
-              </p>
-              <img 
-                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-                alt="Student Branch"
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
+                alt="Expanded Gym Facilities"
                 className="mt-4 rounded-lg w-full max-w-md"
               />
             </div>
@@ -272,7 +254,7 @@ const About = () => {
               <h3 className="text-rebuild-yellow font-bold text-xl mb-2">2023</h3>
               <h4 className="text-xl font-bold mb-3">Premium Facility Upgrade</h4>
               <p className="text-gray-300 mb-2">
-                We renovated our flagship location with state-of-the-art equipment, nutrition consultation rooms, and recovery facilities.
+                We renovated our facility with state-of-the-art equipment, nutrition consultation rooms, and recovery facilities.
               </p>
               <img 
                 src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
@@ -289,7 +271,7 @@ const About = () => {
               <h3 className="text-rebuild-yellow/70 font-bold text-xl mb-2">2025 (Future)</h3>
               <h4 className="text-xl font-bold mb-3">Expansion Plans</h4>
               <p className="text-gray-300">
-                Our vision includes expanding to neighboring cities while maintaining our core philosophy of natural, steroid-free fitness.
+                Our vision includes expanding our premium services and facilities while maintaining our core philosophy of natural, steroid-free fitness.
               </p>
             </div>
           </div>

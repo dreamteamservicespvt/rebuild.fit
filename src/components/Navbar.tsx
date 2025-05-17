@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
@@ -21,6 +20,20 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Add effect to prevent background scrolling when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -53,8 +66,20 @@ const Navbar = () => {
       )}
     >
       <div className="container-custom flex justify-between items-center">
-        <Link to="/" className="flex items-center">
-          <h1 className="text-rebuild-yellow text-3xl">REBUILD.FIT</h1>
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative overflow-hidden">
+            <img 
+              src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470571/cmvlwiujoqiloeitncik.png" 
+              alt="Rebuild.fit Logo" 
+              className="h-12 sm:h-16 w-auto transition-transform duration-300 group-hover:scale-110" 
+            />
+            <div className="absolute inset-0 bg-rebuild-yellow/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+          </div>
+          <img
+            src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747480713/f9t7pf4t3hfxmq0p1mia.png"
+            alt="Rebuild Logo"
+            className="h-8 sm:h-10 w-auto transition-all duration-300"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -91,12 +116,12 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out",
+          "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out overflow-y-auto",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
-        style={{ top: '60px' }}
+        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
       >
-        <div className="flex flex-col space-y-6 p-8">
+        <div className="flex flex-col space-y-6 p-6 min-h-full pb-20">
           {navLinks.map((link) => (
             <Link
               key={link.name}

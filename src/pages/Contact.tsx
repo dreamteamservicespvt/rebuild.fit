@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, Phone, Mail, MessageSquare, Send, Instagram, Facebook } from 'lucide-react';
 
@@ -45,8 +44,12 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">Phone</h3>
-                    <p className="text-gray-300">+91 9876543210</p>
-                    <p className="text-gray-300">+91 9876543211</p>
+                    <p className="text-gray-300">
+                      <a href="tel:+919535344153" className="hover:text-rebuild-yellow">+91 9535344153</a>
+                    </p>
+                    <p className="text-gray-300">
+                      <a href="tel:+919182338776" className="hover:text-rebuild-yellow">+91 9182338776</a>
+                    </p>
                   </div>
                 </div>
                 
@@ -66,10 +69,11 @@ const Contact = () => {
                     <MapPin size={20} className="text-rebuild-yellow" />
                   </div>
                   <div>
-                    <h3 className="font-bold mb-1">Premium Gym Address</h3>
+                    <h3 className="font-bold mb-1">Address</h3>
                     <p className="text-gray-300">
-                      123 Main Street<br />
-                      Kakinada, Andhra Pradesh 533001
+                      Oppo Bala Tripura Sundari Temple St,<br />
+                      Jawaharlal Street, Kakinada,<br />
+                      Andhra Pradesh 533001
                     </p>
                   </div>
                 </div>
@@ -84,7 +88,7 @@ const Contact = () => {
                   <a href="https://facebook.com" className="bg-rebuild-darkgray p-3 rounded-full hover:bg-rebuild-yellow/20 transition-colors">
                     <Facebook size={24} className="text-rebuild-yellow" />
                   </a>
-                  <a href="https://wa.me/919876543210" className="bg-rebuild-darkgray p-3 rounded-full hover:bg-rebuild-yellow/20 transition-colors">
+                  <a href="https://wa.me/919535344153" className="bg-rebuild-darkgray p-3 rounded-full hover:bg-rebuild-yellow/20 transition-colors">
                     <MessageSquare size={24} className="text-rebuild-yellow" />
                   </a>
                 </div>
@@ -157,60 +161,42 @@ const Contact = () => {
       <section className="py-16 bg-rebuild-darkgray">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">OUR LOCATIONS</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">OUR LOCATION</h2>
             <p className="max-w-2xl mx-auto text-gray-300">
-              Visit any of our three specialized gyms in Kakinada
+              Visit our premium gym facility in Kakinada
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 gap-8 mb-12">
             <div className="bg-rebuild-black p-6 rounded-lg">
               <h3 className="text-xl font-bold mb-3">Premium Gym</h3>
               <div className="flex items-start mb-4">
                 <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">123 Main Street, Kakinada, Andhra Pradesh 533001</p>
+                <p className="text-gray-300">Oppo Bala Tripura Sundari Temple St, Jawaharlal Street, Kakinada, Andhra Pradesh 533001</p>
               </div>
               <div className="flex items-center">
                 <Phone size={20} className="text-rebuild-yellow mr-2" />
-                <p className="text-gray-300">+91 9876543210</p>
-              </div>
-            </div>
-            
-            <div className="bg-rebuild-black p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Women's Gym</h3>
-              <div className="flex items-start mb-4">
-                <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">456 Lake View, Kakinada, Andhra Pradesh 533002</p>
-              </div>
-              <div className="flex items-center">
-                <Phone size={20} className="text-rebuild-yellow mr-2" />
-                <p className="text-gray-300">+91 9876543211</p>
-              </div>
-            </div>
-            
-            <div className="bg-rebuild-black p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Student Gym</h3>
-              <div className="flex items-start mb-4">
-                <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">789 College Road, Kakinada, Andhra Pradesh 533003</p>
-              </div>
-              <div className="flex items-center">
-                <Phone size={20} className="text-rebuild-yellow mr-2" />
-                <p className="text-gray-300">+91 9876543212</p>
+                <p className="text-gray-300">
+                  <a href="tel:+919535344153" className="hover:text-rebuild-yellow">+91 9535344153</a>
+                  <span className="mx-2">|</span>
+                  <a href="tel:+919182338776" className="hover:text-rebuild-yellow">+91 9182338776</a>
+                </p>
               </div>
             </div>
           </div>
           
           {/* Map Embed */}
-          <div className="aspect-[16/9] bg-rebuild-black rounded-lg">
-            {/* Google Maps embed would go here */}
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-center">
-                <MapPin size={32} className="text-rebuild-yellow mx-auto mb-4" />
-                <span className="block text-lg">Google Maps would be embedded here</span>
-                <span className="text-sm text-gray-400">Showing all three Rebuild Gym locations in Kakinada</span>
-              </p>
-            </div>
+          <div className="aspect-[16/9] bg-rebuild-black rounded-lg overflow-hidden">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.6397802002865!2d82.23921304973648!3d16.507402043275585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a37bb0fffdf9927%3A0x9c318e7b4b2376e3!2sKakinada%2C%20Andhra%20Pradesh%2C%20India!5e0!3m2!1sen!2sus!4v1647091035320!5m2!1sen!2sus"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Rebuild Gym Location"
+            ></iframe>
           </div>
         </div>
       </section>
@@ -269,7 +255,7 @@ const Contact = () => {
             </div>
             
             <a 
-              href="https://wa.me/919876543210" 
+              href="https://wa.me/919535344153" 
               className="bg-rebuild-black text-white px-8 py-3 rounded-md font-bold flex items-center hover:bg-gray-900 transition-colors"
             >
               <MessageSquare size={20} className="mr-2" /> CHAT ON WHATSAPP

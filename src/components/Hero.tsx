@@ -1,9 +1,45 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
 const Hero = () => {
+  const quotes = [
+    "Your Body is your weapon keep it strong",
+    "Rebuild your body rebuild your Life",
+    "Pain is fuel—turn it into power.",
+    "Train insane or remain the same."
+  ];
+  
+  const [currentQuote, setCurrentQuote] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
+  
+  useEffect(() => {
+    if (isTyping) {
+      if (currentQuote.length < quotes[currentIndex].length) {
+        const timeout = setTimeout(() => {
+          setCurrentQuote(quotes[currentIndex].substring(0, currentQuote.length + 1));
+        }, 100);
+        return () => clearTimeout(timeout);
+      } else {
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000); // Pause at the end
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      if (currentQuote.length > 0) {
+        const timeout = setTimeout(() => {
+          setCurrentQuote(quotes[currentIndex].substring(0, currentQuote.length - 1));
+        }, 50);
+        return () => clearTimeout(timeout);
+      } else {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % quotes.length);
+        setIsTyping(true);
+      }
+    }
+  }, [currentQuote, currentIndex, isTyping, quotes]);
+
   return (
     <section className="relative h-screen flex items-center overflow-hidden">
       {/* Background Image */}
@@ -25,11 +61,11 @@ const Hero = () => {
             WELCOME TO
           </h4>
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
-            <span className="block">REBUILD GYM</span>
-            <span className="block">KAKINADA</span>
+            <span className="block">REBUILD FITNESS</span>
           </h1>
-          <h2 className="text-xl md:text-2xl lg:text-3xl mb-8 font-light">
-            No Steroids. Just Strength. <span className="text-rebuild-yellow font-medium">Real Transformation.</span>
+          <h2 className="text-xl md:text-2xl lg:text-3xl mb-8 font-light min-h-[4rem] flex items-center">
+            <span>{currentQuote}</span>
+            <span className={`ml-1 inline-block w-1 h-8 bg-rebuild-yellow ${isTyping ? 'animate-blink' : 'opacity-0'}`}></span>
           </h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/membership" className="btn-primary flex items-center justify-center">

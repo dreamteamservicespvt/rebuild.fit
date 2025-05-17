@@ -1,7 +1,39 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const FounderSection = () => {
+  const founderImages = [
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470855/mjiwoxgurndo0dr5fm8c.jpg",
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/iduzd9ygya8yfim4dxx6.jpg",
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470856/boob7prv2rqhcqxzsz3t.jpg",
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/zhss0e6f61e0nccafwl6.jpg",
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470853/cymkig5zexwa3cxo6wcg.jpg",
+    "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470853/cymkig5zexwa3cxo6wcg.jpg"
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    const transitionInterval = setInterval(() => {
+      // Start transition effect
+      setIsTransitioning(true);
+      
+      // After transition starts, set the next image
+      const timeout = setTimeout(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % founderImages.length);
+        
+        // Reset transition state after the new image is set
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, 50);
+      }, 750); // Half of the transition duration
+      
+      return () => clearTimeout(timeout);
+    }, 4000); // Change image every 4 seconds
+    
+    return () => clearInterval(transitionInterval);
+  }, [founderImages.length]);
+
   return (
     <section className="py-16 md:py-24 bg-rebuild-darkgray relative overflow-hidden">
       {/* Background pattern */}
@@ -10,14 +42,44 @@ const FounderSection = () => {
       <div className="container-custom relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="relative">
-            {/* Founder image */}
-            <div className="w-full aspect-[3/4] overflow-hidden rounded-lg">
-              <img 
-                src="https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80" 
-                alt="Sagar Akula - Founder of Rebuild Gym" 
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
-              />
+            {/* Founder image carousel */}
+            <div className="w-full aspect-[3/4] overflow-hidden rounded-lg relative">
+              {founderImages.map((imgSrc, index) => (
+                <img 
+                  key={index}
+                  src={imgSrc} 
+                  alt={`Sagar Akula - Founder of Rebuild Gym ${index + 1}`} 
+                  className={`absolute w-full h-full object-cover transition-all duration-1500 ease-in-out ${
+                    index === currentImageIndex 
+                      ? isTransitioning 
+                        ? 'opacity-0 scale-110' 
+                        : 'opacity-100 scale-100' 
+                      : 'opacity-0'
+                  }`} 
+                />
+              ))}
+              
+              {/* Navigation dots */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                {founderImages.map((_, index) => (
+                  <button 
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentImageIndex ? 'bg-rebuild-yellow scale-125' : 'bg-white/50'
+                    }`}
+                    onClick={() => {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setCurrentImageIndex(index);
+                        setTimeout(() => setIsTransitioning(false), 50);
+                      }, 750);
+                    }}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
+            
             {/* Quote overlay */}
             <div className="absolute -bottom-6 -right-6 bg-rebuild-yellow p-6 rounded max-w-xs">
               <blockquote className="text-rebuild-black font-medium italic">
@@ -38,7 +100,7 @@ const FounderSection = () => {
               Frustrated by the rampant use of harmful supplements and steroids in the industry, Sagar dedicated himself to proving that impressive results are achievable without compromising long-term health. His philosophy centers around sustainable fitness, proper nutrition, and mental discipline.
             </p>
             <p className="text-gray-300">
-              Today, Rebuild Gym stands as a testament to his vision with three specialized branches in Kakinada, each dedicated to providing safe, effective, and scientifically-backed fitness solutions for different demographics.
+              Today, Rebuild Gym stands as a testament to his vision in Kakinada, dedicated to providing safe, effective, and scientifically-backed fitness solutions for all members.
             </p>
           </div>
         </div>

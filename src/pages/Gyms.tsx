@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CTASection from '@/components/CTASection';
 import { MapPin, Clock, Info } from 'lucide-react';
@@ -121,7 +120,7 @@ const Gyms = () => {
             
             <div className="order-1 lg:order-2">
               <div className="inline-block bg-rebuild-yellow/20 px-4 py-1 rounded-full mb-4">
-                <h4 className="text-rebuild-yellow text-sm font-semibold">WOMEN EXCLUSIVE</h4>
+                <h4 className="text-rebuild-yellow text-sm font-semibold">DESIGNED FOR WOMEN</h4>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">WOMEN-ONLY GYM</h2>
               <div className="w-16 h-1 bg-rebuild-yellow mb-8" />
@@ -174,7 +173,7 @@ const Gyms = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-block bg-rebuild-yellow/20 px-4 py-1 rounded-full mb-4">
-                <h4 className="text-rebuild-yellow text-sm font-semibold">BUDGET FRIENDLY</h4>
+                <h4 className="text-rebuild-yellow text-sm font-semibold">AFFORDABLE FOR STUDENTS</h4>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">STUDENT GYM</h2>
               <div className="w-16 h-1 bg-rebuild-yellow mb-8" />
@@ -243,66 +242,39 @@ const Gyms = () => {
       <section className="py-16 md:py-24 bg-rebuild-darkgray">
         <div className="container-custom">
           <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">FIND OUR LOCATIONS</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">FIND OUR LOCATION</h2>
             <p className="max-w-2xl mx-auto text-gray-300">
-              Visit any of our three specialized gyms in Kakinada - each designed to meet specific fitness needs
+              Visit our premium gym in Kakinada - designed to meet all your fitness needs
             </p>
           </div>
           
           <div className="bg-rebuild-black p-4 rounded-lg">
-            {/* This would be replaced with an actual Google Maps embed */}
-            <div className="aspect-[16/9] bg-rebuild-darkgray rounded-lg flex items-center justify-center">
-              <p className="text-center">
-                <Info size={32} className="mx-auto mb-4 text-rebuild-yellow" />
-                <span className="block text-lg">Google Maps would be embedded here</span>
-                <span className="text-sm text-gray-400">Showing all three Rebuild Gym locations in Kakinada</span>
-              </p>
+            <div className="aspect-[16/9] rounded-lg overflow-hidden">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5944.102475752507!2d82.2274445!3d16.9555617!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3829efdc1957fb%3A0x9a6fd8f59563789f!2sREBUILD%20FITNESS%20GYM%202!5e1!3m2!1sen!2sin!4v1747483036416!5m2!1sen!2sin" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Rebuild Gym Location"
+                className="w-full h-full"
+              ></iframe>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div className="bg-rebuild-black p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Premium Gym</h3>
-              <div className="flex items-start mb-4">
-                <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">123 Main Street, Kakinada, Andhra Pradesh 533001</p>
-              </div>
-              <div className="flex items-center">
-                <Clock size={20} className="text-rebuild-yellow mr-2" />
-                <div>
-                  <p className="text-gray-300">Mon - Fri: 5:00 AM - 10:00 PM</p>
-                  <p className="text-gray-300">Sat - Sun: 6:00 AM - 8:00 PM</p>
-                </div>
-              </div>
+          <div className="bg-rebuild-black p-6 rounded-lg mt-12 max-w-md mx-auto">
+            <h3 className="text-xl font-bold mb-3">Premium Gym</h3>
+            <div className="flex items-start mb-4">
+              <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
+              <p className="text-gray-300">123 Main Street, Kakinada, Andhra Pradesh 533001</p>
             </div>
-            
-            <div className="bg-rebuild-black p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Women's Gym</h3>
-              <div className="flex items-start mb-4">
-                <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">456 Lake View, Kakinada, Andhra Pradesh 533002</p>
-              </div>
-              <div className="flex items-center">
-                <Clock size={20} className="text-rebuild-yellow mr-2" />
-                <div>
-                  <p className="text-gray-300">Mon - Fri: 6:00 AM - 9:00 PM</p>
-                  <p className="text-gray-300">Sat - Sun: 7:00 AM - 7:00 PM</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-rebuild-black p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Student Gym</h3>
-              <div className="flex items-start mb-4">
-                <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-                <p className="text-gray-300">789 College Road, Kakinada, Andhra Pradesh 533003</p>
-              </div>
-              <div className="flex items-center">
-                <Clock size={20} className="text-rebuild-yellow mr-2" />
-                <div>
-                  <p className="text-gray-300">Mon - Fri: 5:00 AM - 11:00 PM</p>
-                  <p className="text-gray-300">Sat - Sun: 6:00 AM - 10:00 PM</p>
-                </div>
+            <div className="flex items-center">
+              <Clock size={20} className="text-rebuild-yellow mr-2" />
+              <div>
+                <p className="text-gray-300">Mon - Fri: 5:00 AM - 10:00 PM</p>
+                <p className="text-gray-300">Sat - Sun: 6:00 AM - 8:00 PM</p>
               </div>
             </div>
           </div>

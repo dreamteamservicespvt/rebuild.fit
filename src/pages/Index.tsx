@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Hero from '@/components/Hero';
 import FounderSection from '@/components/FounderSection';
@@ -74,17 +73,17 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Three Branches Section */}
+      {/* Three Branches Section - Modified to show only Premium Gym */}
       <section className="py-16 md:py-24 bg-rebuild-darkgray">
         <div className="container-custom">
           <div className="text-center mb-14">
             <h4 className="inline-block font-bebas text-rebuild-yellow tracking-widest border-b-2 border-rebuild-yellow mb-4 pb-1">
-              SPECIALIZED SPACES
+              OUR FACILITY
             </h4>
-            <h2 className="text-4xl md:text-5xl font-bold">OUR THREE BRANCHES</h2>
+            <h2 className="text-4xl md:text-5xl font-bold">PREMIUM GYM</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="max-w-3xl mx-auto">
             <BranchCard 
               title="Premium Gym"
               description="Our flagship facility with state-of-the-art equipment and comprehensive services for serious fitness enthusiasts."
@@ -95,35 +94,9 @@ const Index = () => {
                 "Personal Training",
                 "Nutrition Guidance",
                 "AC Environment",
-                "Shower Facilities"
-              ]}
-            />
-            
-            <BranchCard 
-              title="Women-Only Gym"
-              description="A safe, supportive space exclusively for women with specialized equipment and female trainers."
-              image="https://images.unsplash.com/photo-1518310383802-640c2de311b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-              link="/gyms"
-              features={[
-                "Female Trainers",
-                "Private Environment",
-                "Specialized Programs",
-                "Toning Focus",
-                "Personal Coaching"
-              ]}
-            />
-            
-            <BranchCard 
-              title="Student Gym"
-              description="Affordable fitness options for students with high-energy atmosphere and essential equipment."
-              image="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-              link="/gyms"
-              features={[
-                "Budget Friendly",
-                "Student Discounts",
-                "Group Classes",
-                "Basic Equipment",
-                "Flexible Timings"
+                "Shower Facilities",
+                "Expert Trainers",
+                "Personalized Programs"
               ]}
             />
           </div>
