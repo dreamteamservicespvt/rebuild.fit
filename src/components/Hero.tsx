@@ -159,8 +159,12 @@ const Hero = () => {
           muted
           preload="auto"
           poster="https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?auto=format&fit=crop&q=80&w=1770"
+          onError={(e) => console.log("Mobile video error:", e)}
         >
-          <source src="https://res.cloudinary.com/dvmrhs2ek/video/upload_v1746802131/m2x43bfgesjeqosh8cvw.mp4" type="video/mp4" />
+          <source 
+            src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
+            type="video/mp4" 
+          />
           Your browser does not support the video tag.
         </video>
         
