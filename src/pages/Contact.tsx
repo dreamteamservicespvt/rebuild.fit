@@ -187,16 +187,13 @@ const Contact = () => {
           
           {/* Map Embed */}
           <div className="aspect-[16/9] bg-rebuild-black rounded-lg overflow-hidden">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.6397802002865!2d82.23921304973648!3d16.507402043275585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a37bb0fffdf9927%3A0x9c318e7b4b2376e3!2sKakinada%2C%20Andhra%20Pradesh%2C%20India!5e0!3m2!1sen!2sus!4v1647091035320!5m2!1sen!2sus"
-              width="100%"
+   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11886.648384289012!2d82.2128609559494!3d16.952446100000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3829efdc1957fb%3A0x9a6fd8f59563789f!2sREBUILD%20FITNESS%20GYM%202!5e1!3m2!1sen!2sin!4v1747635599405!5m2!1sen!2sin"       width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen={true}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Rebuild Gym Location"
-            ></iframe>
+              title="Rebuild Gym Location"></iframe>
           </div>
         </div>
       </section>

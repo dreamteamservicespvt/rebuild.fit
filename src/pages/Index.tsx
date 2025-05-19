@@ -115,30 +115,30 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <TransformationCard 
-              name="Rahul Sharma"
-              beforeImage="https://images.unsplash.com/photo-1581125119293-4803aa54b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80"
-              afterImage="https://images.unsplash.com/photo-1567013127542-490d757e6349?ixlib=rb-4.0.3&auto=format&fit=crop&w=1774&q=80"
-              duration="6 Months"
-              goal="Fat Loss & Muscle Gain"
-              testimonial="I lost 15kgs and gained visible muscle definition within 6 months of joining Rebuild Gym. The trainers' focus on natural methods has completely changed my lifestyle for the better."
-            />
-            
-            <TransformationCard 
-              name="Priya Patel"
-              beforeImage="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80"
-              afterImage="https://images.unsplash.com/photo-1609899464926-c34737772596?ixlib=rb-4.0.3&auto=format&fit=crop&w=1771&q=80"
-              duration="4 Months"
-              goal="Strength & Toning"
-              testimonial="The women's gym provided me with the comfortable environment I needed. I've gained incredible strength and confidence without any pressure to use supplements."
-            />
-            
-            <TransformationCard 
               name="Arjun Desai"
-              beforeImage="https://images.unsplash.com/photo-1600019281908-65efe6b10da6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80"
-              afterImage="https://images.unsplash.com/photo-1632781297772-1d68e15f1d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1776&q=80"
+              beforeImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676152/uzphwgmljn5womru59wz.jpg"
+              afterImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676137/aoaoqoianm3btizaaspi.jpg"
               duration="8 Months"
               goal="Muscle Building"
               testimonial="As a student, I thought I'd need supplements to get real results. The trainers at Rebuild showed me that proper form, nutrition, and consistency are what truly matter."
+            />
+            
+            <TransformationCard 
+              name="Siddharth Kapoor"
+              beforeImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677823/gznk8fsqrrfsgs7qssac.jpg"
+              afterImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677826/vtmbwu2qhnmmobrdtb1r.jpg"
+              duration="5 Months"
+              goal="Fat Loss"
+              testimonial="I thought getting back in shape would be impossible with my busy schedule. Rebuild created a plan that worked with my routine and helped me lose 20kgs naturally."
+            />
+            
+            <TransformationCard 
+              name="Akash Sharma"
+              beforeImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678020/dzq9jbnylqpmjzt3s7il.jpg"
+              afterImage="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678022/vndwcp0jxmy48kry1kzk.jpg"
+              duration="10 Months"
+              goal="Strength & Muscle"
+              testimonial="I was skeptical about building muscle without supplements, but Rebuild's science-backed approach proved me wrong. I've gained more strength and definition than ever before."
             />
           </div>
         </div>
@@ -156,36 +156,45 @@ const Index = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <TrainerCard 
-              name="Ravi Kumar"
+              name="Sagar Akula"
               role="Head Trainer"
-              image="https://images.unsplash.com/photo-1524805444758-089113d48a6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1888&q=80"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/zhss0e6f61e0nccafwl6.jpg"
               experience="10+ Years"
+              specialization="Natural Bodybuilding & Transformation"
+            />
+            
+            <TrainerCard 
+              name="Chandu"
+              role="Partner & Head Trainer"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678656/ifafg4cds1vj46oqmth4.jpg"
+              experience="8 Years"
               specialization="Strength & Conditioning"
             />
             
             <TrainerCard 
-              name="Anjali Reddy"
-              role="Women's Fitness Coach"
-              image="https://images.unsplash.com/photo-1609899464926-c34737772596?ixlib=rb-4.0.3&auto=format&fit=crop&w=1771&q=80"
-              experience="8 Years"
-              specialization="Toning & Functional Fitness"
-            />
-            
-            <TrainerCard 
-              name="Vikram Singh"
-              role="Nutrition Specialist"
-              image="https://images.unsplash.com/photo-1562771379-eafdca7a02f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
+              name="Vasu"
+              role="Strength Coach"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678982/fss5ijkf6cb8grzpdkco.jpg"
               experience="7+ Years"
               specialization="Diet Planning & Weight Management"
             />
             
-            <TrainerCard 
-              name="Meera Joshi"
-              role="Student Program Lead"
-              image="https://images.unsplash.com/photo-1530645833031-97107ee1d2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1879&q=80"
+                <TrainerCard 
+              name="Revathi"
+              role="Women's Fitness Coach"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678979/gymlbrwtlgb4quxyksej.jpg"
               experience="6 Years"
-              specialization="Group Training & Basics"
+              specialization="Toning & Weight Management"
             />
+            
+            <TrainerCard 
+              name="Aparna"
+              role="Fitness Instructor"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678984/b2aus5dgw4lnb09hmuha.jpg"
+              experience="5 Years"
+              specialization="Functional Training & Nutrition"
+            />
+            
           </div>
         </div>
       </section>

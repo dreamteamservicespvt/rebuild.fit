@@ -76,7 +76,7 @@ const Navbar = () => {
             <div className="absolute inset-0 bg-rebuild-yellow/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
           </div>
           <img
-            src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747480713/f9t7pf4t3hfxmq0p1mia.png"
+            src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747482873/lissllpnwgq5z2hu7ukz.png"
             alt="Rebuild Logo"
             className="h-8 sm:h-10 w-auto transition-all duration-300"
           />

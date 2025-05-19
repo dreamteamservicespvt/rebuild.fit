@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import CTASection from '@/components/CTASection';
 import TransformationCard from '@/components/TransformationCard';
@@ -9,57 +8,66 @@ const Transformations = () => {
   const transformations = [
     {
       id: 1,
-      name: "Rahul Sharma",
-      beforeImage: "https://images.unsplash.com/photo-1581125119293-4803aa54b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80",
-      afterImage: "https://images.unsplash.com/photo-1567013127542-490d757e6349?ixlib=rb-4.0.3&auto=format&fit=crop&w=1774&q=80",
+      name: "Rajesh Kumar",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675592/hmf8rvlowbhh1dtqxq7y.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675561/pg9hi3yubqn1fjwmbd8y.jpg",
       duration: "6 Months",
       goal: "Fat Loss & Muscle Gain",
       testimonial: "I lost 15kgs and gained visible muscle definition within 6 months of joining Rebuild Gym. The trainers' focus on natural methods has completely changed my lifestyle for the better."
     },
     {
       id: 2,
-      name: "Priya Patel",
-      beforeImage: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80",
-      afterImage: "https://images.unsplash.com/photo-1609899464926-c34737772596?ixlib=rb-4.0.3&auto=format&fit=crop&w=1771&q=80",
+      name: "Vikram Singh",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677656/pdpmiteuc1g1wbicrskx.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675897/mne0zrezdxh26uor6ygp.jpg",
       duration: "4 Months",
       goal: "Strength & Toning",
-      testimonial: "The women's gym provided me with the comfortable environment I needed. I've gained incredible strength and confidence without any pressure to use supplements."
+      testimonial: "I've gained incredible strength and confidence without any pressure to use supplements. The coaching at Rebuild Gym has been transformational for my fitness journey."
     },
     {
       id: 3,
       name: "Arjun Desai",
-      beforeImage: "https://images.unsplash.com/photo-1600019281908-65efe6b10da6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80",
-      afterImage: "https://images.unsplash.com/photo-1632781297772-1d68e15f1d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1776&q=80",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676152/uzphwgmljn5womru59wz.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676137/aoaoqoianm3btizaaspi.jpg",
       duration: "8 Months",
       goal: "Muscle Building",
       testimonial: "As a student, I thought I'd need supplements to get real results. The trainers at Rebuild showed me that proper form, nutrition, and consistency are what truly matter."
     },
     {
       id: 4,
-      name: "Kavita Reddy",
-      beforeImage: "https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-4.0.3&auto=format&fit=crop&w=1687&q=80",
-      afterImage: "https://images.unsplash.com/photo-1588964895597-cfccd35c2b78?ixlib=rb-4.0.3&auto=format&fit=crop&w=1674&q=80",
+      name: "Siddharth Kapoor",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677823/gznk8fsqrrfsgs7qssac.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677826/vtmbwu2qhnmmobrdtb1r.jpg",
       duration: "5 Months",
       goal: "Fat Loss",
-      testimonial: "After having two kids, I thought getting back in shape would be impossible. The women's gym at Rebuild created a plan that worked with my schedule and helped me lose 20kgs naturally."
+      testimonial: "I thought getting back in shape would be impossible with my busy schedule. Rebuild created a plan that worked with my routine and helped me lose 20kgs naturally."
     },
     {
       id: 5,
-      name: "Vikram Singh",
-      beforeImage: "https://images.unsplash.com/photo-1583454155184-870a1f63aebc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1674&q=80",
-      afterImage: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80",
+      name: "Akash Sharma",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678020/dzq9jbnylqpmjzt3s7il.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678022/vndwcp0jxmy48kry1kzk.jpg",
       duration: "10 Months",
       goal: "Strength & Muscle",
       testimonial: "I was skeptical about building muscle without supplements, but Rebuild's science-backed approach proved me wrong. I've gained more strength and definition than ever before."
     },
     {
       id: 6,
-      name: "Anjali Mehta",
-      beforeImage: "https://images.unsplash.com/photo-1578763363228-6e6bfeb5e2bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1674&q=80",
-      afterImage: "https://images.unsplash.com/photo-1584863265045-f9d10ca7fa61?ixlib=rb-4.0.3&auto=format&fit=crop&w=1636&q=80",
+      name: "Rahul Mehta",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678137/fxwjrf0jdiqvpqpunzet.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678140/afw9nplal7rde8rmigs7.jpg",
       duration: "7 Months",
       goal: "General Fitness",
       testimonial: "After years of inconsistent fitness routines, Rebuild helped me establish a sustainable lifestyle that improved my energy, sleep, and overall health."
+    },
+    {
+      id: 7,
+      name: "Nikhil Verma",
+      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678014/svar6sscajch60npv7rt.jpg",
+      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678012/dh7k3ezo1rpbsrdxu7jf.jpg",
+      duration: "6 Months",
+      goal: "Fat Loss & Muscle Gain",
+      testimonial: "The trainers at Rebuild showed me that transformation doesn't require shortcuts. With their guidance, I achieved results I never thought possible through natural methods."
     }
   ];
   

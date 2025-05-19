@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CTASection from '@/components/CTASection';
 import TrainerCard from '@/components/TrainerCard';
@@ -33,35 +32,35 @@ const Trainers = () => {
             <div className="w-full md:w-1/2 xl:w-2/5 relative">
               <div className="aspect-[3/4] overflow-hidden rounded-lg">
                 <img 
-                  src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-4.0.3&auto=format&fit=crop&w=1769&q=80"
+                  src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/zhss0e6f61e0nccafwl6.jpg"
                   alt="Trainer of the Month"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 bg-rebuild-yellow p-6 rounded-lg shadow-lg">
-                <h3 className="text-rebuild-black font-bold text-xl">TRAINER OF THE MONTH</h3>
+                <h3 className="text-rebuild-black font-bold text-xl">FOUNDER & LEAD TRAINER</h3>
               </div>
             </div>
             
             <div className="w-full md:w-1/2 xl:w-3/5">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">RAVI KUMAR</h2>
-              <h3 className="text-rebuild-yellow text-xl mb-6">Head Trainer & Strength Specialist</h3>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">SAGAR AKULA</h2>
+              <h3 className="text-rebuild-yellow text-xl mb-6">Founder & Head Trainer</h3>
               
               <div className="space-y-6 text-gray-300">
                 <p>
-                  With over 10 years of experience in fitness coaching and a background in sports medicine, Ravi leads our team of trainers with expertise and passion. His philosophy centers around functional strength, proper biomechanics, and natural progression techniques.
+                  With a passion for natural fitness and a vision to transform the fitness landscape in India, Sagar founded Rebuild Gym to provide a space where genuine transformation happens without harmful shortcuts.
                 </p>
                 <p>
-                  After witnessing the harmful effects of steroid use in the fitness industry, Ravi joined Rebuild Gym to help create a movement focused on sustainable, health-first training methods. His clients range from beginners to advanced athletes, all achieving significant results without harmful supplements.
+                  Having witnessed the harmful effects of steroid use in the fitness industry, Sagar dedicated himself to creating a movement focused on sustainable, health-first training methods. His expertise in natural bodybuilding and strength training has helped countless clients achieve remarkable results.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
                   <div className="bg-rebuild-darkgray p-4 rounded">
                     <h4 className="text-lg font-semibold mb-2">Specializations</h4>
                     <ul className="list-disc pl-5 space-y-1 text-gray-400">
-                      <li>Strength & Conditioning</li>
                       <li>Natural Bodybuilding</li>
-                      <li>Injury Rehabilitation</li>
+                      <li>Strength & Conditioning</li>
+                      <li>Transformation Coaching</li>
                       <li>Nutrition Planning</li>
                     </ul>
                   </div>
@@ -69,16 +68,16 @@ const Trainers = () => {
                   <div className="bg-rebuild-darkgray p-4 rounded">
                     <h4 className="text-lg font-semibold mb-2">Certifications</h4>
                     <ul className="list-disc pl-5 space-y-1 text-gray-400">
-                      <li>Certified Strength & Conditioning Coach</li>
+                      <li>Certified Fitness Trainer</li>
                       <li>Sports Nutrition Specialist</li>
-                      <li>Corrective Exercise Specialist</li>
+                      <li>Strength Training Expert</li>
                       <li>First Aid & CPR</li>
                     </ul>
                   </div>
                 </div>
                 
                 <a href="#book" className="inline-block mt-6 bg-rebuild-yellow text-rebuild-black px-6 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
-                  BOOK A SESSION WITH RAVI
+                  BOOK A SESSION WITH SAGAR
                 </a>
               </div>
             </div>
@@ -96,70 +95,46 @@ const Trainers = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
             <TrainerCard 
-              name="Ravi Kumar"
-              role="Head Trainer"
-              image="https://images.unsplash.com/photo-1524805444758-089113d48a6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1888&q=80"
+              name="Sagar Akula"
+              role="Founder & Head Trainer"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/zhss0e6f61e0nccafwl6.jpg"
               experience="10+ Years"
+              specialization="Natural Bodybuilding & Transformation"
+            />
+            
+            <TrainerCard 
+              name="Chandu"
+              role="Partner & Head Trainer"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678656/ifafg4cds1vj46oqmth4.jpg"
+              experience="8 Years"
               specialization="Strength & Conditioning"
             />
-            
-            <TrainerCard 
-              name="Anjali Reddy"
-              role="Women's Fitness Coach"
-              image="https://images.unsplash.com/photo-1609899464926-c34737772596?ixlib=rb-4.0.3&auto=format&fit=crop&w=1771&q=80"
-              experience="8 Years"
-              specialization="Toning & Functional Fitness"
-            />
-            
-            <TrainerCard 
-              name="Vikram Singh"
-              role="Nutrition Specialist"
-              image="https://images.unsplash.com/photo-1562771379-eafdca7a02f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-              experience="7+ Years"
-              specialization="Diet Planning & Weight Management"
-            />
-            
-            <TrainerCard 
-              name="Meera Joshi"
-              role="Student Program Lead"
-              image="https://images.unsplash.com/photo-1530645833031-97107ee1d2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1879&q=80"
-              experience="6 Years"
-              specialization="Group Training & Basics"
-            />
-            
-            <TrainerCard 
-              name="Arjun Kumar"
+              <TrainerCard 
+              name="Vasu"
               role="Strength Coach"
-              image="https://images.unsplash.com/photo-1618498082410-b4aa22193b38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-              experience="5 Years"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678982/fss5ijkf6cb8grzpdkco.jpg"
+              experience="7 Years"
               specialization="Powerlifting & Sports Performance"
             />
-            
             <TrainerCard 
-              name="Priya Sharma"
-              role="Yoga & Mobility Specialist"
-              image="https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80"
-              experience="9 Years"
-              specialization="Flexibility & Recovery"
+              name="Revathi"
+              role="Women's Fitness Coach"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678979/gymlbrwtlgb4quxyksej.jpg"
+              experience="6 Years"
+              specialization="Toning & Weight Management"
             />
             
             <TrainerCard 
-              name="Raj Patel"
-              role="Transformation Coach"
-              image="https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80"
-              experience="7 Years"
-              specialization="Fat Loss & Lifestyle Change"
-            />
-            
-            <TrainerCard 
-              name="Sonia Gupta"
+              name="Aparna"
               role="Fitness Instructor"
-              image="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80"
-              experience="4 Years"
-              specialization="Group Classes & Cardio"
+              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678984/b2aus5dgw4lnb09hmuha.jpg"
+              experience="5 Years"
+              specialization="Functional Training & Nutrition"
             />
+            
+          
           </div>
         </div>
       </section>
@@ -208,10 +183,11 @@ const Trainers = () => {
                 <label className="block text-gray-300 mb-2">Preferred Trainer</label>
                 <select className="w-full bg-rebuild-black border border-gray-700 rounded-md px-4 py-2 text-white focus:border-rebuild-yellow focus:outline-none">
                   <option>No preference</option>
-                  <option>Ravi Kumar - Head Trainer</option>
-                  <option>Anjali Reddy - Women's Fitness</option>
-                  <option>Vikram Singh - Nutrition</option>
-                  <option>Meera Joshi - Student Program</option>
+                  <option>Sagar Akula - Founder & Head Trainer</option>
+                  <option>Chandu - Partner & Head Trainer</option>
+                  <option>Revathi - Women's Fitness Coach</option>
+                  <option>Aparna - Fitness Instructor</option>
+                  <option>Vasu - Strength Coach</option>
                 </select>
               </div>
               

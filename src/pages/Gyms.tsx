@@ -268,7 +268,7 @@ const Gyms = () => {
             <h3 className="text-xl font-bold mb-3">Premium Gym</h3>
             <div className="flex items-start mb-4">
               <MapPin size={20} className="text-rebuild-yellow mr-2 mt-1" />
-              <p className="text-gray-300">123 Main Street, Kakinada, Andhra Pradesh 533001</p>
+              <p className="text-gray-300">Oppo Bala Tripura Sundari Temple St, Jawaharlal Street, Kakinada, Andhra Pradesh 533001</p>
             </div>
             <div className="flex items-center">
               <Clock size={20} className="text-rebuild-yellow mr-2" />

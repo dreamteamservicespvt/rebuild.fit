@@ -87,7 +87,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} Rebuild Gym Kakinada. Designed and Developed by DREAM TEAM SERVICES
+            © {new Date().getFullYear()} Rebuild Gym Kakinada. Designed and Developed by <a href="https://thedreamteamservices.com" target="_blank" rel="noopener noreferrer" className="text-rebuild-yellow hover:underline">DREAM TEAM SERVICES</a>
           </p>
           <div className="flex space-x-6">
             <Link to="/privacy-policy" className="text-gray-400 hover:text-rebuild-yellow text-sm">Privacy Policy</Link>
