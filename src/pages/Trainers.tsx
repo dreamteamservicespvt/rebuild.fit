@@ -109,7 +109,7 @@ const Trainers = () => {
               role="Partner & Head Trainer"
               image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678656/ifafg4cds1vj46oqmth4.jpg"
               experience="8 Years"
-              specialization="Strength & Conditioning"
+              specialization="Workout Plan & Personalized Diet Planning with Natural Transformation"
             />
               <TrainerCard 
               name="Vasu"
