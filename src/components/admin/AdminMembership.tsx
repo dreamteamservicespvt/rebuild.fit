@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,8 +8,13 @@ import { useToast } from '@/components/ui/use-toast';
 interface Membership {
   id: string;
   name: string;
-  price: string;
-  duration: string;
+  price: {
+    monthly: string;
+    quarterly: string;
+    halfyearly: string;
+    annual: string;
+  };
+  type: string;
   features: string[];
   isPopular: boolean;
 }
@@ -18,26 +22,41 @@ interface Membership {
 const INITIAL_MEMBERSHIPS: Membership[] = [
   {
     id: '1',
-    name: 'Basic',
-    price: '₹1,500',
-    duration: 'Monthly',
-    features: ['Access to gym equipment', '24/7 access', 'Locker included'],
+    name: 'STRENGTHENING',
+    price: {
+      monthly: '₹1,999',
+      quarterly: '₹5,499',
+      halfyearly: '₹7,499',
+      annual: '₹11,999'
+    },
+    type: 'premium',
+    features: ['Access to strength equipment', 'Gym access (6 AM - 10 PM)', 'Locker access', 'Basic strength training guidance'],
     isPopular: false
   },
   {
     id: '2',
-    name: 'Premium',
-    price: '₹2,500',
-    duration: 'Monthly',
-    features: ['Access to gym equipment', '24/7 access', 'Personal training sessions', 'Nutrition consultation'],
+    name: 'CARDIO + STRENGTHENING',
+    price: {
+      monthly: '₹2,499',
+      quarterly: '₹6,499',
+      halfyearly: '₹8,999',
+      annual: '₹14,999'
+    },
+    type: 'premium',
+    features: ['Full access to cardio section', 'All strength equipment access', 'Extended hours access', 'Locker & towel service', 'Comprehensive fitness guidance'],
     isPopular: true
   },
   {
     id: '3',
-    name: 'Student',
-    price: '₹1,000',
-    duration: 'Monthly',
-    features: ['Access to gym equipment', 'Limited hours access'],
+    name: 'STRENGTHENING',
+    price: {
+      monthly: '₹999',
+      quarterly: '₹2,799',
+      halfyearly: '₹4,999',
+      annual: '₹8,999'
+    },
+    type: 'student',
+    features: ['Access to strength equipment', 'Student gym access', 'Off-peak hours only'],
     isPopular: false
   }
 ];
@@ -46,11 +65,17 @@ const AdminMembership = () => {
   const [memberships, setMemberships] = useState<Membership[]>(INITIAL_MEMBERSHIPS);
   const [editing, setEditing] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [activeDuration, setActiveDuration] = useState<'monthly' | 'quarterly' | 'halfyearly' | 'annual'>('monthly');
   
   const [formData, setFormData] = useState<Omit<Membership, 'id'>>({
     name: '',
-    price: '',
-    duration: '',
+    price: {
+      monthly: '',
+      quarterly: '',
+      halfyearly: '',
+      annual: ''
+    },
+    type: 'premium',
     features: [],
     isPopular: false
   });
@@ -61,8 +86,8 @@ const AdminMembership = () => {
     setEditing(membership.id);
     setFormData({
       name: membership.name,
-      price: membership.price,
-      duration: membership.duration,
+      price: {...membership.price},
+      type: membership.type,
       features: [...membership.features],
       isPopular: membership.isPopular
     });
@@ -101,8 +126,13 @@ const AdminMembership = () => {
     
     setFormData({
       name: '',
-      price: '',
-      duration: '',
+      price: {
+        monthly: '',
+        quarterly: '',
+        halfyearly: '',
+        annual: ''
+      },
+      type: 'premium',
       features: [],
       isPopular: false
     });
@@ -113,8 +143,13 @@ const AdminMembership = () => {
     setEditing(null);
     setFormData({
       name: '',
-      price: '',
-      duration: '',
+      price: {
+        monthly: '',
+        quarterly: '',
+        halfyearly: '',
+        annual: ''
+      },
+      type: 'premium',
       features: [],
       isPopular: false
     });
@@ -134,6 +169,36 @@ const AdminMembership = () => {
         </Button>
       </div>
 
+      {/* Duration Toggle */}
+      <div className="mb-6">
+        <div className="flex space-x-2 bg-rebuild-darkgray p-1 rounded-md inline-flex">
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'monthly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('monthly')}
+          >
+            Monthly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'quarterly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('quarterly')}
+          >
+            Quarterly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'halfyearly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('halfyearly')}
+          >
+            Half-yearly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'annual' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('annual')}
+          >
+            Annual
+          </button>
+        </div>
+      </div>
+
       {(isAdding || editing) && (
         <div className="bg-rebuild-darkgray p-6 rounded-lg mb-6 animate-fade-in">
           <h3 className="text-xl font-bold mb-4">{isAdding ? 'Add New Plan' : 'Edit Plan'}</h3>
@@ -148,18 +213,59 @@ const AdminMembership = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">Price</label>
+              <label className="block text-sm font-medium mb-1">Type</label>
+              <select 
+                className="w-full bg-rebuild-black border border-gray-700 rounded-md px-3 py-2 text-white"
+                value={formData.type}
+                onChange={(e) => setFormData({...formData, type: e.target.value})}
+              >
+                <option value="premium">Premium</option>
+                <option value="women">Women's</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Monthly Price</label>
               <Input 
-                value={formData.price} 
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
+                value={formData.price.monthly} 
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  price: {...formData.price, monthly: e.target.value}
+                })}
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-1">Duration</label>
+              <label className="block text-sm font-medium mb-1">Quarterly Price</label>
               <Input 
-                value={formData.duration} 
-                onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                value={formData.price.quarterly} 
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  price: {...formData.price, quarterly: e.target.value}
+                })}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Half-yearly Price</label>
+              <Input 
+                value={formData.price.halfyearly} 
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  price: {...formData.price, halfyearly: e.target.value}
+                })}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Annual Price</label>
+              <Input 
+                value={formData.price.annual} 
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  price: {...formData.price, annual: e.target.value}
+                })}
               />
             </div>
             
@@ -201,8 +307,8 @@ const AdminMembership = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Duration</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Price ({activeDuration})</TableHead>
             <TableHead>Features</TableHead>
             <TableHead>Popular</TableHead>
             <TableHead>Actions</TableHead>
@@ -212,8 +318,8 @@ const AdminMembership = () => {
           {memberships.map(membership => (
             <TableRow key={membership.id}>
               <TableCell className="font-medium">{membership.name}</TableCell>
-              <TableCell>{membership.price}</TableCell>
-              <TableCell>{membership.duration}</TableCell>
+              <TableCell className="capitalize">{membership.type}</TableCell>
+              <TableCell>{membership.price[activeDuration]}</TableCell>
               <TableCell>
                 <ul className="list-disc list-inside">
                   {membership.features.slice(0, 2).map((feature, i) => (
