@@ -1,0 +1,320 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Edit2, Trash2, Plus, Save, X, Loader2 } from 'lucide-react';
+import { blogService, type BlogPost } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+import ImageUpload from '@/components/ImageUpload';
+import { format } from 'date-fns';
+
+const AdminBlog = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>({
+    title: '',
+    excerpt: '',
+    content: '',
+    image: '',
+    author: '',
+    date: new Date().toISOString().split('T')[0],
+    category: ''
+  });
+  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = blogService.onSnapshot((postsList) => {
+      setPosts(postsList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleEdit = (post: BlogPost) => {
+    setEditing(post.id!);
+    setFormData({
+      title: post.title,
+      excerpt: post.excerpt,
+      content: post.content,
+      image: post.image,
+      author: post.author,
+      date: post.date,
+      category: post.category
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await blogService.delete(id);
+      toast({
+        title: 'Blog post deleted',
+        description: 'Blog post has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete blog post',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.title || !formData.content || !formData.author) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await blogService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Blog post updated',
+          description: 'Blog post has been updated successfully',
+        });
+      } else if (isAdding) {
+        await blogService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Blog post added',
+          description: 'New blog post has been added successfully',
+        });
+      }
+      
+      setFormData({
+        title: '',
+        excerpt: '',
+        content: '',
+        image: '',
+        author: '',
+        date: new Date().toISOString().split('T')[0],
+        category: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update blog post' : 'Failed to add blog post',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setFormData({
+      title: '',
+      excerpt: '',
+      content: '',
+      image: '',
+      author: '',
+      date: new Date().toISOString().split('T')[0],
+      category: ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setFormData({
+      title: '',
+      excerpt: '',
+      content: '',
+      image: '',
+      author: '',
+      date: new Date().toISOString().split('T')[0],
+      category: ''
+    });
+  };
+
+  const handleImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, image: url }));
+  };
+
+  if (loading) {
+    return <div className="text-center py-8">Loading blog posts...</div>;
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Manage Blog Posts</h2>
+        <Button onClick={startAdding} className="flex items-center gap-2">
+          <Plus size={16} /> Add New Post
+        </Button>
+      </div>
+
+      {(isAdding || editing) && (
+        <div className="bg-rebuild-darkgray p-6 rounded-lg mb-6 animate-fade-in">
+          <h3 className="text-xl font-bold mb-4">{isAdding ? 'Add New Blog Post' : 'Edit Blog Post'}</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title *</label>
+              <Input 
+                value={formData.title} 
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                placeholder="Enter blog post title"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Author *</label>
+              <Input 
+                value={formData.author} 
+                onChange={(e) => setFormData({...formData, author: e.target.value})}
+                placeholder="Enter author name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <Input 
+                value={formData.category} 
+                onChange={(e) => setFormData({...formData, category: e.target.value})}
+                placeholder="e.g., Nutrition, Training"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Date</label>
+              <Input 
+                type="date" 
+                value={formData.date} 
+                onChange={(e) => setFormData({...formData, date: e.target.value})}
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Excerpt</label>
+              <Textarea 
+                value={formData.excerpt} 
+                onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
+                rows={2}
+                placeholder="Enter a brief excerpt for the blog post"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Featured Image</label>
+              <ImageUpload
+                onImageUploaded={handleImageUploaded}
+                currentImage={formData.image}
+                uploadPath="blog/"
+              />
+              {formData.image && (
+                <Input 
+                  value={formData.image} 
+                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  placeholder="Or enter image URL"
+                  className="mt-2"
+                />
+              )}
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Content *</label>
+              <Textarea 
+                value={formData.content} 
+                onChange={(e) => setFormData({...formData, content: e.target.value})}
+                className="min-h-[200px]"
+                placeholder="Enter the full blog post content"
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={cancelEdit} disabled={saving}>
+              <X size={16} className="mr-1" /> Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <Loader2 size={16} className="mr-1 animate-spin" />
+              ) : (
+                <Save size={16} className="mr-1" />
+              )}
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Image</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Author</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {posts.map(post => (
+            <TableRow key={post.id}>
+              <TableCell>
+                {post.image ? (
+                  <img src={post.image} alt={post.title} className="w-16 h-12 object-cover rounded" />
+                ) : (
+                  <div className="w-16 h-12 bg-gray-200 rounded flex items-center justify-center text-xs">
+                    No Image
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="font-medium max-w-[200px] truncate">{post.title}</TableCell>
+              <TableCell>{post.author}</TableCell>
+              <TableCell>{post.category || 'Uncategorized'}</TableCell>
+              <TableCell>
+                {post.createdAt ? format(post.createdAt.toDate(), 'MMM dd, yyyy') : post.date}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleEdit(post)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Edit2 size={14} />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={() => handleDelete(post.id!)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {posts.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No blog posts found. Add your first post to get started.
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminBlog;

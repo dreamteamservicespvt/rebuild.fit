@@ -1,0 +1,580 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, User, Briefcase, Award, Star, Loader2 } from 'lucide-react';
+import { trainersService, type Trainer } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+import EnhancedImageUpload from '@/components/EnhancedImageUpload';
+import AdminLayout from './AdminLayout';
+import AdminFormField from './AdminFormField';
+import { AdminTable, TableHeader, TableBody, TableHead, TableCell, TableRow, EmptyState, LoadingState } from './AdminTable';
+import AdminActions from './AdminActions';
+import AdminModal from './AdminModal';
+import ResponsiveImage from '@/components/ResponsiveImage';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+const AdminTrainers = () => {
+  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  
+  const [formData, setFormData] = useState<Omit<Trainer, 'id'>>({
+    name: '',
+    role: '',
+    image: '',
+    experience: '',
+    specialization: ''
+  });
+  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = trainersService.onSnapshot((trainersList) => {
+      setTrainers(trainersList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!formData.role.trim()) {
+      newErrors.role = 'Role is required';
+    }
+    
+    if (!formData.specialization.trim()) {
+      newErrors.specialization = 'Specialization is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleEdit = (trainer: Trainer) => {
+    setEditing(trainer.id!);
+    setFormData({
+      name: trainer.name,
+      role: trainer.role,
+      image: trainer.image,
+      experience: trainer.experience,
+      specialization: trainer.specialization
+    });
+    setErrors({});
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await trainersService.delete(id);
+      toast({
+        title: 'Success',
+        description: 'Trainer has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete trainer',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please correct the errors in the form',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await trainersService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Success',
+          description: 'Trainer information has been updated successfully',
+        });
+      } else if (isAdding) {
+        await trainersService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Success',
+          description: 'New trainer has been added successfully',
+        });
+      }
+      
+      setFormData({
+        name: '',
+        role: '',
+        image: '',
+        experience: '',
+        specialization: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update trainer' : 'Failed to add trainer',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setFormData({
+      name: '',
+      role: '',
+      image: '',
+      experience: '',
+      specialization: ''
+    });
+    setErrors({});
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setFormData({
+      name: '',
+      role: '',
+      image: '',
+      experience: '',
+      specialization: ''
+    });
+    setErrors({});
+  };
+
+  const handleImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, image: url }));
+  };
+
+  const handleViewDetails = (trainer: Trainer) => {
+    setSelectedTrainer(trainer);
+    setViewModalOpen(true);
+  };
+
+  // Common experience options
+  const experienceOptions = [
+    "1+ Years",
+    "2+ Years",
+    "3+ Years",
+    "5+ Years",
+    "7+ Years", 
+    "10+ Years",
+    "15+ Years",
+    "20+ Years"
+  ];
+  
+  // Common specialization options
+  const specializationOptions = [
+    "Strength Training",
+    "Weight Loss",
+    "Bodybuilding",
+    "Functional Fitness",
+    "CrossFit",
+    "Nutrition",
+    "Sports Performance",
+    "Rehabilitation",
+    "Yoga & Flexibility",
+    "HIIT",
+    "Kettlebell Training"
+  ];
+  
+  // Common role options
+  const roleOptions = [
+    "Head Trainer",
+    "Senior Trainer",
+    "Fitness Coach",
+    "Personal Trainer",
+    "Nutrition Specialist",
+    "Fitness Manager",
+    "Group Fitness Instructor",
+    "Yoga Instructor",
+    "Strength Coach"
+  ];
+  
+  const renderForm = () => (
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Basic Information Section */}
+      <Card className="bg-rebuild-darkgray border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <User className="text-rebuild-yellow" size={20} />
+            Basic Information
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Enter the trainer's personal and professional details
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AdminFormField
+              id="name"
+              label="Trainer Name"
+              required
+              error={errors.name}
+              floatingLabel
+              animate
+              tooltip="Enter the trainer's full name"
+            >
+              <Input 
+                id="name"
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="Enter trainer name"
+                icon={<User size={16} />}
+                variant="modern"
+                status={errors.name ? "error" : "default"}
+              />
+            </AdminFormField>
+            
+            <AdminFormField
+              id="role"
+              label="Role / Position"
+              required
+              error={errors.role}
+              tooltip="The trainer's position or title at the gym"
+              floatingLabel
+              animate
+            >
+              <div className="relative">
+                <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3 pointer-events-none z-10">
+                  <Briefcase size={16} className="text-gray-400" />
+                </div>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => setFormData({...formData, role: value})}
+                >
+                  <SelectTrigger 
+                    className={cn(
+                      "pl-9 border-0 border-b-2 border-gray-700 focus-visible:border-rebuild-yellow bg-transparent rounded-none", 
+                      errors.role ? "border-destructive" : "",
+                      !formData.role && "text-muted-foreground"
+                    )}
+                  >
+                    <SelectValue placeholder="Select role or type custom" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-rebuild-darkgray border-gray-700">
+                    {roleOptions.map(option => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="custom">Custom (type below)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {formData.role === 'custom' && (
+                <Input
+                  value=""
+                  onChange={(e) => setFormData({...formData, role: e.target.value})}
+                  placeholder="Enter custom role"
+                  variant="modern"
+                  className="mt-2"
+                />
+              )}
+            </AdminFormField>
+          </div>
+          
+          <AdminFormField
+            id="image"
+            label="Profile Image"
+            description="Upload a professional photo of the trainer"
+            animate
+            tooltip="Recommended: High-quality professional headshot with clean background"
+          >
+            <EnhancedImageUpload
+              onImageUploaded={handleImageUploaded}
+              currentImage={formData.image}
+              uploadPath="trainers/"
+              aspectRatio="portrait"
+              previewSize="lg"
+              placeholder="Drag and drop a trainer photo here, or click to select"
+              variant="card"
+            />
+          </AdminFormField>
+        </CardContent>
+      </Card>
+
+      {/* Expertise & Credentials Section */}
+      <Card className="bg-rebuild-darkgray border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Award className="text-rebuild-yellow" size={20} />
+            Expertise & Credentials
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Define the trainer's experience and areas of specialization
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AdminFormField
+              id="experience"
+              label="Experience"
+              tooltip="The number of years of professional experience"
+              floatingLabel
+              animate
+            >
+              <div className="relative">
+                <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3 pointer-events-none z-10">
+                  <Award size={16} className="text-gray-400" />
+                </div>
+                <Select
+                  value={formData.experience}
+                  onValueChange={(value) => setFormData({...formData, experience: value})}
+                >
+                  <SelectTrigger 
+                    className={cn(
+                      "pl-9 border-0 border-b-2 border-gray-700 focus-visible:border-rebuild-yellow bg-transparent rounded-none",
+                      !formData.experience && "text-muted-foreground"
+                    )}
+                  >
+                    <SelectValue placeholder="Select experience or type custom" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-rebuild-darkgray border-gray-700">
+                    {experienceOptions.map(option => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="custom">Custom (type below)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {formData.experience === 'custom' && (
+                <Input
+                  value=""
+                  onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                  placeholder="Enter custom experience"
+                  variant="modern"
+                  icon={<Award size={16} />}
+                  className="mt-2"
+                />
+              )}
+            </AdminFormField>
+            
+            <AdminFormField
+              id="specialization"
+              label="Specialization"
+              required
+              error={errors.specialization}
+              tooltip="The trainer's main areas of expertise"
+              floatingLabel
+              animate
+            >
+              <div className="relative">
+                <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3 pointer-events-none z-10">
+                  <Star size={16} className="text-gray-400" />
+                </div>
+                <Select
+                  value={formData.specialization}
+                  onValueChange={(value) => setFormData({...formData, specialization: value})}
+                >
+                  <SelectTrigger 
+                    className={cn(
+                      "pl-9 border-0 border-b-2 border-gray-700 focus-visible:border-rebuild-yellow bg-transparent rounded-none",
+                      errors.specialization ? "border-destructive" : "",
+                      !formData.specialization && "text-muted-foreground"
+                    )}
+                  >
+                    <SelectValue placeholder="Select specialization or type custom" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-rebuild-darkgray border-gray-700">
+                    {specializationOptions.map(option => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="custom">Custom (type below)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {formData.specialization === 'custom' && (
+                <Input
+                  value=""
+                  onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                  placeholder="Enter custom specialization"
+                  variant="modern"
+                  icon={<Star size={16} />}
+                  className="mt-2"
+                />
+              )}
+            </AdminFormField>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <FormActions 
+        onSave={handleSave} 
+        onCancel={cancelEdit} 
+        isLoading={saving}
+        saveText={isAdding ? "Add Trainer" : "Update Trainer"}
+      />
+    </div>
+  );
+
+  if (loading) {
+    return <LoadingState message="Loading trainers..." />;
+  }
+
+  // View Details Modal
+  const renderViewDetailsModal = () => (
+    <AdminModal
+      isOpen={viewModalOpen}
+      onClose={() => setViewModalOpen(false)}
+      title={selectedTrainer?.name || "Trainer Details"}
+      size="md"
+    >
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          {selectedTrainer?.image ? (
+            <div className="rounded-full overflow-hidden w-32 h-32 ring-4 ring-rebuild-yellow/20">
+              <ResponsiveImage
+                src={selectedTrainer.image}
+                alt={selectedTrainer.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center">
+              <User size={40} className="text-gray-400" />
+            </div>
+          )}
+          
+          <div className="text-center sm:text-left">
+            <h3 className="text-xl font-bold">{selectedTrainer?.name}</h3>
+            <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+              <Badge className="bg-rebuild-yellow text-rebuild-black">
+                {selectedTrainer?.role}
+              </Badge>
+              <Badge variant="outline">
+                {selectedTrainer?.specialization}
+              </Badge>
+              {selectedTrainer?.experience && (
+                <Badge variant="outline">
+                  <Award size={12} className="mr-1" />
+                  {selectedTrainer.experience}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </AdminModal>
+  );
+
+  return (
+    <AdminLayout 
+      title="Trainers"
+      description="Manage your personal trainers and coaching staff"
+      actions={
+        <Button onClick={startAdding} className="flex items-center gap-2 bg-rebuild-yellow text-rebuild-black hover:bg-yellow-500">
+          <Plus size={16} /> Add New Trainer
+        </Button>
+      }
+      isLoading={loading}
+    >
+      {(isAdding || editing) && renderForm()}
+
+      {!isAdding && !editing && (
+        <>
+          <AdminTable>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Image</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="hidden md:table-cell">Experience</TableHead>
+                <TableHead className="hidden md:table-cell">Specialization</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {trainers.map(trainer => (
+                <TableRow key={trainer.id} isHighlighted={trainer.id === editing}>
+                  <TableCell>
+                    {trainer.image ? (
+                      <div className="w-12 h-12 rounded-full overflow-hidden">
+                        <ResponsiveImage 
+                          src={trainer.image} 
+                          alt={trainer.name} 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
+                        <User size={18} className="text-gray-400" />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">{trainer.name}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{trainer.role}</Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {trainer.experience || '—'}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <span className="text-sm">{trainer.specialization}</span>
+                  </TableCell>
+                  <TableCell>
+                    <AdminActions 
+                      onEdit={() => handleEdit(trainer)}
+                      onDelete={() => handleDelete(trainer.id!)}
+                      onView={() => handleViewDetails(trainer)}
+                      disabled={editing !== null || isAdding}
+                      itemName={`trainer "${trainer.name}"`}
+                      showView={true}
+                      compact
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </AdminTable>
+
+          {trainers.length === 0 && (
+            <EmptyState
+              icon={<User size={40} />}
+              title="No Trainers Found"
+              description="Add your first trainer to get started."
+              action={
+                <Button onClick={startAdding} className="flex items-center gap-2 bg-rebuild-yellow text-rebuild-black hover:bg-yellow-500">
+                  <Plus size={16} /> Add New Trainer
+                </Button>
+              }
+            />
+          )}
+          
+          {renderViewDetailsModal()}
+        </>
+      )}
+    </AdminLayout>
+  );
+};
+
+export default AdminTrainers;

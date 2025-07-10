@@ -1,0 +1,289 @@
+import React, { useState, useEffect } from 'react';
+import { Edit2, Trash2, Plus, Save, X, User, Award, Calendar, Target } from 'lucide-react';
+import { trainersService, type Trainer } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+import { AdminCard } from '@/components/ui/admin-card';
+import { FormField } from '@/components/ui/form-field';
+import { EnhancedInput } from '@/components/ui/enhanced-input';
+import { EnhancedButton } from '@/components/ui/enhanced-button';
+import { EnhancedTable, type Column } from '@/components/ui/enhanced-table';
+import { EnhancedSelect, type Option } from '@/components/ui/enhanced-select';
+import EnhancedImageUpload from '@/components/ui/enhanced-image-upload';
+
+const AdminTrainers = () => {
+  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const [formData, setFormData] = useState<Omit<Trainer, 'id'>>({
+    name: '',
+    role: '',
+    image: '',
+    experience: '',
+    specialization: ''
+  });
+  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = trainersService.onSnapshot((trainersList) => {
+      setTrainers(trainersList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleEdit = (trainer: Trainer) => {
+    setEditing(trainer.id!);
+    setFormData({
+      name: trainer.name,
+      role: trainer.role,
+      image: trainer.image,
+      experience: trainer.experience,
+      specialization: trainer.specialization
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await trainersService.delete(id);
+      toast({
+        title: 'Trainer deleted',
+        description: 'Trainer has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete trainer',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.role || !formData.specialization) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await trainersService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Trainer updated',
+          description: 'Trainer information has been updated successfully',
+        });
+      } else if (isAdding) {
+        await trainersService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Trainer added',
+          description: 'New trainer has been added successfully',
+        });
+      }
+      
+      setFormData({
+        name: '',
+        role: '',
+        image: '',
+        experience: '',
+        specialization: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update trainer' : 'Failed to add trainer',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setFormData({
+      name: '',
+      role: '',
+      image: '',
+      experience: '',
+      specialization: ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setFormData({
+      name: '',
+      role: '',
+      image: '',
+      experience: '',
+      specialization: ''
+    });
+  };
+
+  const handleImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, image: url }));
+  };
+
+  if (loading) {
+    return <div className="text-center py-8">Loading trainers...</div>;
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Manage Trainers</h2>
+        <Button onClick={startAdding} className="flex items-center gap-2">
+          <Plus size={16} /> Add New Trainer
+        </Button>
+      </div>
+
+      {(isAdding || editing) && (
+        <div className="bg-rebuild-darkgray p-6 rounded-lg mb-6 animate-fade-in">
+          <h3 className="text-xl font-bold mb-4">{isAdding ? 'Add New Trainer' : 'Edit Trainer'}</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name *</label>
+              <Input 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="Enter trainer name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Role *</label>
+              <Input 
+                value={formData.role} 
+                onChange={(e) => setFormData({...formData, role: e.target.value})}
+                placeholder="e.g., Head Trainer, Nutrition Coach"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Experience</label>
+              <Input 
+                value={formData.experience} 
+                onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                placeholder="e.g., 8+ Years"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Specialization *</label>
+              <Input 
+                value={formData.specialization} 
+                onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                placeholder="e.g., Strength Training, Weight Loss"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Profile Image</label>
+              <ImageUpload
+                onImageUploaded={handleImageUploaded}
+                currentImage={formData.image}
+                uploadPath="trainers/"
+              />
+              {formData.image && (
+                <Input 
+                  value={formData.image} 
+                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  placeholder="Or enter image URL"
+                  className="mt-2"
+                />
+              )}
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={cancelEdit} disabled={saving}>
+              <X size={16} className="mr-1" /> Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <Loader2 size={16} className="mr-1 animate-spin" />
+              ) : (
+                <Save size={16} className="mr-1" />
+              )}
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Image</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Experience</TableHead>
+            <TableHead>Specialization</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {trainers.map(trainer => (
+            <TableRow key={trainer.id}>
+              <TableCell>
+                {trainer.image ? (
+                  <img src={trainer.image} alt={trainer.name} className="w-12 h-12 object-cover rounded-full" />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-xs">
+                    No Photo
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="font-medium">{trainer.name}</TableCell>
+              <TableCell>{trainer.role}</TableCell>
+              <TableCell>{trainer.experience}</TableCell>
+              <TableCell>{trainer.specialization}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleEdit(trainer)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Edit2 size={14} />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={() => handleDelete(trainer.id!)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {trainers.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No trainers found. Add your first trainer to get started.
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminTrainers;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -74,6 +74,23 @@
   
   .section-padding {
     @apply py-16 md:py-24;
+  }
+
+  /* Enhanced animations for premium UI */
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+    opacity: 0;
   }
 
   .animate-on-scroll {
@@ -236,3 +253,1692 @@
     }
   }
 }
+
+/* Form field enhancements */
+@layer components {
+  /* Ensure inputs maintain height and don't collapse */
+  .form-group,
+  .input-container {
+    min-height: 76px;
+  }
+  
+  /* Admin form field improvements */
+  input,
+  textarea,
+  select {
+    @apply w-full min-h-[40px];
+  }
+  
+  /* Fix for select fields */
+  [data-radix-select-trigger] {
+    @apply h-10 min-h-[40px];
+  }
+  
+  /* Add robust focus effect */
+  input:focus,
+  textarea:focus,
+  select:focus,
+  [data-state="open"] {
+    @apply outline-none ring-2 ring-rebuild-yellow/25 border-rebuild-yellow;
+  }
+  
+  /* Enhance form field stability */
+  .field-focused {
+    @apply relative z-10;
+  }
+  
+  /* Form field states */
+  .form-field-error input,
+  .form-field-error textarea,
+  .form-field-error select,
+  .form-field-error [data-radix-select-trigger] {
+    @apply border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/30;
+  }
+  
+  .form-field-focused input,
+  .form-field-focused textarea,
+  .form-field-focused select,
+  .form-field-focused [data-radix-select-trigger] {
+    @apply border-rebuild-yellow focus-visible:border-rebuild-yellow;
+  }
+  
+  /* Ensure stable height for form fields */
+  .admin-form-field {
+    @apply min-h-[85px] transition-all duration-200;
+  }
+  
+  /* Prevent layout shifts for inputs and selects */
+  .admin-form-control {
+    @apply min-h-[42px] w-full relative;
+  }
+  
+  /* Animation for loading overlay */
+  @keyframes growWidth {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  .animate-growWidth {
+    animation: growWidth 0.3s forwards;
+  }
+}
+
+/* Custom Trainer Card Animations */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-5px) rotate(0.5deg); 
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 243, 24, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 243, 24, 0.4), 0 0 40px rgba(255, 243, 24, 0.1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.trainer-card-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.trainer-card-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 243, 24, 0.1),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.trainer-card-glow {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.5s ease-out forwards;
+}
+
+/* Enhanced content animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Staggered animation delays */
+.animate-fade-in-up:nth-child(1) { animation-delay: 0s; }
+.animate-fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+.animate-fade-in-up:nth-child(3) { animation-delay: 0.4s; }
+.animate-fade-in-up:nth-child(4) { animation-delay: 0.6s; }
+
+/* Responsive animations */
+@media (max-width: 640px) {
+  .animate-slide-up {
+    animation-delay: 0.1s !important;
+  }
+  
+  .trainer-card-enhanced:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .trainer-card-enhanced,
+  .animate-slide-up,
+  .animate-fade-in-scale {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .trainer-card-enhanced:hover {
+    transform: none !important;
+  }
+}
+
+/* Glassmorphism effect */
+.glass-effect {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced hover effects */
+.trainer-card-enhanced:hover {
+  transform: translateY(-8px) scale(1.02);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================
+   WORLD-CLASS CARD ANIMATIONS & EFFECTS
+   ========================================== */
+
+/* Enhanced card hover animations */
+.card-world-class {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-world-class:hover {
+  transform: translateY(-12px) scale(1.02);
+  filter: brightness(1.05);
+}
+
+/* Floating animation for badges */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-6px) rotate(1deg); }
+  66% { transform: translateY(-3px) rotate(-1deg); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer effect for premium elements */
+@keyframes shimmer-premium {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.shimmer-premium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 243, 24, 0.3),
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  animation: shimmer-premium 2s infinite;
+}
+
+/* Gradient border animation */
+@keyframes gradient-border {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-border {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 243, 24, 0.3),
+    rgba(255, 196, 0, 0.3),
+    rgba(255, 243, 24, 0.3)
+  );
+  background-size: 300% 300%;
+  animation: gradient-border 3s ease infinite;
+}
+
+/* Enhanced glassmorphism */
+.glass-world-class {
+  background: rgba(25, 25, 25, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 243, 24, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Pulse glow effect */
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 243, 24, 0.3);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(255, 243, 24, 0.6);
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Staggered animations for card features */
+.stagger-animation {
+  animation-delay: calc(var(--stagger-delay, 0) * 100ms);
+}
+
+/* Enhanced text animations */
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 243, 24, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(255, 243, 24, 0.8); }
+}
+
+.animate-text-glow {
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+/* Card content reveal animation */
+@keyframes reveal-content {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal-content {
+  animation: reveal-content 0.6s ease-out forwards;
+}
+
+/* Enhanced button hover effects */
+.btn-world-class {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-world-class::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-world-class:hover::before {
+  transform: translateX(100%);
+}
+
+/* Enhanced border gradient animation */
+.border-gradient-animated {
+  position: relative;
+  background: linear-gradient(45deg, 
+    rgba(255, 243, 24, 0.1),
+    rgba(255, 196, 0, 0.1),
+    rgba(255, 243, 24, 0.1),
+    rgba(255, 196, 0, 0.1)
+  );
+  background-size: 400% 400%;
+  animation: gradient-border 4s ease infinite;
+}
+
+/* Enhanced shadow effects */
+.shadow-world-class {
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    0 1px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-world-class:hover {
+  box-shadow: 
+    0 20px 60px rgba(255, 243, 24, 0.2),
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 1px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive enhancements */
+@media (max-width: 640px) {
+  .card-world-class:hover {
+    transform: translateY(-6px) scale(1.01);
+  }
+  
+  .animate-float {
+    animation-duration: 4s;
+  }
+}
+
+/* Accessibility considerations */
+@media (prefers-reduced-motion: reduce) {
+  .card-world-class,
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-gradient-border,
+  .border-gradient-animated {
+    animation: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+  
+  .card-world-class:hover {
+    transform: none !important;
+  }
+}
+
+/* ==========================================
+   END WORLD-CLASS CARD EFFECTS
+   ========================================== */
+
+/* ==========================================
+   HERO BACKGROUND SLIDESHOW ANIMATIONS
+   ========================================== */
+
+/* Smooth hero background slideshow transitions */
+@keyframes hero-slide-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-slide-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+.hero-bg-enter {
+  animation: hero-slide-in 1s ease-out forwards;
+}
+
+.hero-bg-exit {
+  animation: hero-slide-out 0.5s ease-in forwards;
+}
+
+/* Slideshow indicator animations */
+@keyframes indicator-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+  }
+}
+
+.hero-indicator-active {
+  animation: indicator-pulse 2s ease-in-out infinite;
+}
+
+/* Smooth content transitions */
+@keyframes content-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content-enter {
+  animation: content-fade-up 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+/* Additional performance optimizations for slideshow */
+.hero-bg-slideshow {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+/* Enhanced slideshow transitions */
+@keyframes slideshow-fade {
+  0% {
+    opacity: 0;
+    transform: scale(1.1) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+.slideshow-enter {
+  animation: slideshow-fade 1s ease-out forwards;
+}
+
+/* Smooth progress bar animation */
+@keyframes progress-fill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-bar-fill {
+  animation: progress-fill 5s linear infinite;
+}
+
+/* Prevent layout shift during transitions */
+.slideshow-container {
+  contain: layout style paint;
+}
+
+/* Mobile optimizations for slideshow */
+@media (max-width: 768px) {
+  .slideshow-container {
+    height: 50vh;
+  }
+  
+  .hero-bg-slideshow {
+    background-attachment: scroll; /* Prevent iOS issues */
+  }
+  
+  /* Reduce motion for better mobile performance */
+  .hero-bg-enter,
+  .hero-bg-exit {
+    animation-duration: 0.6s;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-enter,
+  .hero-bg-slideshow,
+  .progress-bar-fill {
+    animation: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .slideshow-indicators button {
+    background: white;
+    border: 2px solid black;
+  }
+  
+  .slideshow-indicators button.active {
+    background: black;
+    border: 2px solid white;
+  }
+}
+
+/* ==========================================
+   END HERO SLIDESHOW ANIMATIONS
+   ========================================== */
+
+/* ==========================================
+   PREMIUM GALLERY & SERVICES ANIMATIONS
+   ========================================== */
+
+/* Gallery card animations */
+@keyframes gallery-card-hover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 20px -5px rgba(255, 255, 255, 0.05);
+  }
+}
+
+.gallery-card:hover {
+  animation: gallery-card-hover 0.3s ease-out forwards;
+}
+
+/* Service card animations */
+@keyframes service-card-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.service-card:hover {
+  animation: service-card-float 2s ease-in-out infinite;
+}
+
+/* Premium gradient text animation */
+@keyframes gradient-text {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(-45deg, #eab308, #fbbf24, #f59e0b, #d97706);
+  background-size: 400% 400%;
+  animation: gradient-text 3s ease infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Section entrance animations */
+@keyframes section-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-animate {
+  animation: section-fade-in 0.8s ease-out;
+}
+
+/* Staggered animation for grid items */
+@keyframes stagger-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.stagger-item {
+  animation: stagger-fade-in 0.6s ease-out both;
+}
+
+/* Icon bounce animation */
+@keyframes icon-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.icon-bounce:hover {
+  animation: icon-bounce 1s ease-in-out;
+}
+
+/* Pulse animation for highlights */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(234, 179, 8, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Smooth reveal animations */
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reveal-up {
+  animation: reveal-up 0.7s ease-out;
+}
+
+.reveal-scale {
+  animation: reveal-scale 0.5s ease-out;
+}
+
+/* Premium button animations */
+@keyframes button-glow {
+  0% {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(234, 179, 8, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+  }
+}
+
+.btn-glow:hover {
+  animation: button-glow 1.5s ease-in-out infinite;
+}
+
+/* Image overlay animations */
+@keyframes overlay-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.overlay-slide {
+  animation: overlay-slide 0.4s ease-out;
+}
+
+/* Typography animations */
+@keyframes text-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: text-shimmer 3s ease-in-out infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Modal animations */
+@keyframes modal-fade-in {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes modal-scale-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-fade-in {
+  animation: modal-fade-in 0.3s ease-out;
+}
+
+.modal-scale-in {
+  animation: modal-scale-in 0.3s ease-out;
+}
+
+/* Responsive font scaling */
+@media (max-width: 768px) {
+  .text-responsive-xl {
+    font-size: clamp(2rem, 8vw, 4rem);
+  }
+  
+  .text-responsive-lg {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+  }
+  
+  .text-responsive-md {
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-card,
+  .service-card,
+  .btn-glow,
+  .text-shimmer,
+  .pulse-glow,
+  .icon-bounce {
+    animation: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .gradient-text {
+    background: white;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* ==========================================
+   END PREMIUM GALLERY & SERVICES ANIMATIONS
+   ========================================== */
+
+/* Text shadow utilities for better readability against video backgrounds */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Modal animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-scale-in {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: scale-in 0.2s ease-out;
+}
+
+/* ==========================================
+   MEMBERSHIP PAGE PREMIUM ANIMATIONS
+   ========================================== */
+
+/* Gradient animation for text */
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Premium card hover effects */
+@keyframes membership-card-hover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(255, 243, 24, 0.2), 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.membership-card:hover {
+  animation: membership-card-hover 0.4s ease-out forwards;
+}
+
+/* Enhanced glow effect for popular cards */
+@keyframes premium-glow-enhanced {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 243, 24, 0.3),
+      0 0 40px rgba(255, 243, 24, 0.1),
+      0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 243, 24, 0.5),
+      0 0 60px rgba(255, 243, 24, 0.2),
+      0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.animate-premium-glow-enhanced {
+  animation: premium-glow-enhanced 3s ease-in-out infinite;
+}
+
+/* Staggered fade-in animation for cards */
+@keyframes stagger-fade-in-membership {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.membership-card {
+  animation: stagger-fade-in-membership 0.8s ease-out both;
+}
+
+/* Button hover effects */
+@keyframes button-premium-hover {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 243, 24, 0.3);
+  }
+}
+
+.btn-membership:hover {
+  animation: button-premium-hover 0.3s ease-out forwards;
+}
+
+/* Floating badge animation */
+@keyframes float-badge {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(-1px) rotate(-1deg);
+  }
+}
+
+.floating-badge {
+  animation: float-badge 3s ease-in-out infinite;
+}
+
+/* Text reveal animations */
+@keyframes text-reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.text-reveal {
+  animation: text-reveal-up 0.8s ease-out;
+}
+
+/* Enhanced section transitions */
+@keyframes section-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-slide-up {
+  animation: section-slide-up 1s ease-out;
+}
+
+/* Pulse animation for indicators */
+@keyframes pulse-indicator {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.pulse-indicator {
+  animation: pulse-indicator 2s ease-in-out infinite;
+}
+
+/* Background particle animation */
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translateY(-20px) translateX(10px) rotate(120deg);
+    opacity: 0.6;
+  }
+  66% {
+    transform: translateY(-10px) translateX(-10px) rotate(240deg);
+    opacity: 0.4;
+  }
+}
+
+.particle-float {
+  animation: particle-float 8s ease-in-out infinite;
+}
+
+/* Enhanced border animations */
+@keyframes border-gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.border-gradient-animated {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 243, 24, 0.3),
+    rgba(246, 201, 14, 0.3),
+    rgba(255, 243, 24, 0.3)
+  );
+  background-size: 300% 300%;
+  animation: border-gradient-rotate 4s ease infinite;
+}
+
+/* Loading state animations */
+@keyframes skeleton-wave {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-wave {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(255, 255, 255, 0.2) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  background-size: 200px 100%;
+  animation: skeleton-wave 2s ease-in-out infinite;
+}
+
+/* Enhanced hover states */
+.feature-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .membership-card:hover {
+    transform: translateY(-6px) scale(1.01);
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  /* Reduce animation intensity on mobile */
+  .animate-premium-glow,
+  .animate-premium-glow-enhanced {
+    animation-duration: 4s;
+  }
+}
+
+/* Accessibility - Respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+  .membership-card,
+  .feature-card,
+  .btn-membership,
+  .floating-badge,
+  .pulse-indicator,
+  .particle-float,
+  .border-gradient-animated,
+  .animate-gradient-x,
+  .animate-premium-glow,
+  .animate-premium-glow-enhanced {
+    animation: none !important;
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+  }
+  
+  .membership-card:hover,
+  .feature-card:hover {
+    transform: scale(1.02) !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .membership-card,
+  .feature-card {
+    border: 2px solid white !important;
+    background: black !important;
+  }
+  
+  .text-rebuild-yellow {
+    color: yellow !important;
+  }
+  
+  .bg-rebuild-yellow {
+    background-color: yellow !important;
+    color: black !important;
+  }
+}
+
+/* Enhanced glassmorphism effects */
+.glass-premium {
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 243, 24, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================
+   END MEMBERSHIP PAGE ANIMATIONS
+   ========================================== */
+
+/* ==========================================
+   PAYMENT FLOW SPECIFIC STYLES
+   ========================================== */
+
+/* Payment stepper container */
+.payment-stepper-container {
+  @apply bg-rebuild-black/30 backdrop-blur-sm rounded-xl border border-gray-700/50;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Payment header isolation */
+.payment-header {
+  isolation: isolate;
+  contain: layout style;
+}
+
+/* Payment page body to ensure no navbar conflicts */
+.payment-page-body {
+  @apply min-h-screen bg-rebuild-black;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Enhanced payment stepper animations */
+@keyframes payment-step-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(246, 201, 14, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(246, 201, 14, 0);
+  }
+}
+
+.payment-step-current {
+  animation: payment-step-pulse 2s infinite;
+}
+
+/* Payment stepper connector line animation */
+@keyframes step-connector-fill {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.step-connector-active {
+  animation: step-connector-fill 0.5s ease-out forwards;
+}
+
+/* Mobile payment stepper enhancements */
+@media (max-width: 768px) {
+  .payment-stepper-container {
+    @apply mx-2 rounded-lg;
+  }
+  
+  .payment-page-body {
+    @apply px-2;
+  }
+}
+
+/* Accessibility improvements for payment flow */
+@media (prefers-reduced-motion: reduce) {
+  .payment-step-current {
+    animation: none !important;
+  }
+  
+  .step-connector-active {
+    animation: none !important;
+    transform: scaleX(1);
+  }
+}
+
+/* ==========================================
+   END PAYMENT FLOW STYLES
+   ========================================== */
+
+/* ==========================================
+   ADMIN PANEL SMALL SCREEN FIXES (< 401px)
+   ========================================== */
+
+/* Fix for very small screens (below 401px) */
+@media (max-width: 400px) {
+  /* Container and card fixes */
+  .admin-container {
+    @apply px-2 py-2;
+  }
+  
+  /* Form section improvements */
+  .admin-form-section .card {
+    @apply mx-1;
+  }
+  
+  /* Form field improvements */
+  .admin-form-field {
+    @apply mb-2;
+  }
+  
+  /* Input and textarea sizing fixes */
+  input, textarea, select {
+    @apply text-sm min-h-[32px] px-2 py-1;
+  }
+  
+  /* Button sizing fixes */
+  button {
+    @apply text-sm min-h-[32px] px-3 py-1;
+  }
+  
+  /* Grid column fixes */
+  .admin-grid-cols {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  /* Photo gallery fixes */
+  .photo-gallery-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  /* Badge fixes */
+  .admin-badge {
+    @apply text-xs px-1 py-0.5;
+  }
+  
+  /* Icon sizing fixes */
+  .admin-icon {
+    @apply w-3 h-3;
+  }
+  
+  /* Modal and overlay fixes */
+  .admin-modal {
+    @apply mx-2 my-4;
+  }
+  
+  /* Spacing fixes */
+  .admin-spacing {
+    @apply space-y-2;
+  }
+  
+  /* Trainer admin section specific fixes */
+  .trainer-stats-grid {
+    @apply grid-cols-2 gap-2;
+  }
+  
+  .trainer-stats-card {
+    @apply p-2;
+  }
+  
+  .trainer-card-mobile {
+    @apply p-2;
+  }
+  
+  .trainer-filter-container {
+    @apply p-2 gap-2;
+  }
+  
+  .trainer-filter-buttons {
+    @apply flex-wrap gap-1;
+  }
+  
+  .trainer-filter-button {
+    @apply text-xs px-2 py-1 min-w-0 flex-shrink-0;
+  }
+  
+  .trainer-view-mode-buttons {
+    @apply gap-1;
+  }
+  
+  .trainer-view-mode-button {
+    @apply text-xs px-2 py-1 flex-1;
+  }
+  
+  .trainer-search-input {
+    @apply text-sm h-8 px-2;
+  }
+  
+  .trainer-search-icon {
+    @apply w-3 h-3 left-2;
+  }
+  
+  .trainer-action-button {
+    @apply p-1 min-w-0;
+  }
+  
+  .trainer-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .trainer-badge-mobile {
+    @apply text-xs px-1 py-0;
+  }
+  
+  /* Ensure trainer cards don't break layout */
+  .trainer-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  /* Table responsiveness */
+  .trainer-table-mobile .hidden {
+    @apply !hidden;
+  }
+
+  /* Transformation admin section specific fixes */
+  .transformation-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .transformation-card-mobile {
+    @apply p-1;
+  }
+  
+  .transformation-card-mobile .card-content {
+    @apply p-2;
+  }
+  
+  .transformation-action-button {
+    @apply p-1 min-w-0 h-6 w-6;
+  }
+  
+  .transformation-drag-handle {
+    @apply w-3 h-3;
+  }
+  
+  .transformation-image-container {
+    @apply aspect-[3/4];
+  }
+  
+  .transformation-goal-text {
+    @apply text-xs line-clamp-2;
+  }
+  
+  .transformation-testimonial-text {
+    @apply text-xs line-clamp-2;
+  }
+  
+  .transformation-view-mode-button {
+    @apply h-6 w-6 p-0 text-xs;
+  }
+  
+  .transformation-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .transformation-grid-container {
+    @apply block;
+  }
+  
+  .transformation-table-container {
+    @apply hidden;
+  }
+
+  /* Membership admin section specific fixes */
+  .membership-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .membership-action-button {
+    @apply p-1 min-w-0 h-6 w-6;
+  }
+  
+  .membership-drag-handle {
+    @apply w-3 h-3;
+  }
+  
+  .membership-type-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .membership-feature-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .membership-view-mode-button {
+    @apply h-6 w-6 p-0 text-xs;
+  }
+  
+  .membership-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .membership-grid-container {
+    @apply block;
+  }
+  
+  .membership-table-container {
+    @apply hidden;
+  }
+
+  /* Add-on Services admin section specific fixes */
+  .addon-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .addon-action-button {
+    @apply p-1 min-w-0 h-6 w-6;
+  }
+  
+  .addon-drag-handle {
+    @apply w-3 h-3;
+  }
+  
+  .addon-category-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .addon-feature-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .addon-description-text {
+    @apply text-xs line-clamp-2;
+  }
+  
+  .addon-view-mode-button {
+    @apply h-6 w-6 p-0 text-xs;
+  }
+  
+  .addon-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .addon-search-input {
+    @apply text-sm h-8 px-2;
+  }
+  
+  .addon-search-icon {
+    @apply w-3 h-3 left-2;
+  }
+  
+  .addon-grid-container {
+    @apply block;
+  }
+  
+  .addon-table-container {
+    @apply hidden;
+  }
+
+  /* Service Bookings admin section specific fixes */
+  .booking-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .booking-action-button {
+    @apply p-1 min-w-0 h-6 w-6;
+  }
+  
+  .booking-status-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .booking-email-text {
+    @apply text-xs line-clamp-1;
+  }
+  
+  .booking-phone-text {
+    @apply text-xs;
+  }
+  
+  .booking-membership-text {
+    @apply text-xs line-clamp-1;
+  }
+  
+  .booking-date-text {
+    @apply text-xs;
+  }
+  
+  .booking-view-mode-button {
+    @apply h-6 w-6 p-0 text-xs;
+  }
+  
+  .booking-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .booking-search-input {
+    @apply text-sm h-8 px-2;
+  }
+  
+  .booking-search-icon {
+    @apply w-3 h-3 left-2;
+  }
+  
+  .booking-grid-container {
+    @apply block;
+  }
+  
+  .booking-table-container {
+    @apply hidden;
+  }
+
+  /* Blog Posts admin section specific fixes */
+  .blog-card-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .blog-action-button {
+    @apply p-1 min-w-0 h-6 w-6;
+  }
+  
+  .blog-drag-handle {
+    @apply w-3 h-3;
+  }
+  
+  .blog-category-badge {
+    @apply text-xs px-1 py-0;
+  }
+  
+  .blog-title-text {
+    @apply text-sm line-clamp-2;
+  }
+  
+  .blog-excerpt-text {
+    @apply text-xs line-clamp-2;
+  }
+  
+  .blog-author-text {
+    @apply text-xs line-clamp-1;
+  }
+  
+  .blog-date-text {
+    @apply text-xs;
+  }
+  
+  .blog-image-container {
+    @apply h-24;
+  }
+  
+  .blog-image-placeholder {
+    @apply h-24;
+  }
+  
+  .blog-view-mode-button {
+    @apply h-6 w-6 p-0 text-xs;
+  }
+  
+  .blog-table-cell {
+    @apply p-2 text-xs;
+  }
+  
+  .blog-search-input {
+    @apply text-sm h-8 px-2;
+  }
+  
+  .blog-search-icon {
+    @apply w-3 h-3 left-2;
+  }
+  
+  .blog-grid-container {
+    @apply block;
+  }
+  
+  .blog-table-container {
+    @apply hidden;
+  }
+  
+  /* Payment card grid styles */
+  .payment-card-grid {
+    @apply gap-3;
+  }
+  
+  .payment-card-grid .admin-card {
+    @apply p-3;
+  }
+  
+  .payment-action-button {
+    @apply text-xs px-2 py-1 min-h-[28px];
+  }
+  
+  /* Contact card grid styles */
+  .contact-card-grid {
+    @apply gap-3;
+  }
+  
+  .contact-card-grid .admin-card {
+    @apply p-3;
+  }
+  
+  .contact-action-button {
+    @apply text-xs px-2 py-1 min-h-[28px];
+  }
+  
+  .contact-status-badge {
+    @apply text-xs px-1 py-0.5;
+  }
+}
+
+/* ==========================================
+   END ADMIN PANEL SMALL SCREEN FIXES
+   ========================================== */

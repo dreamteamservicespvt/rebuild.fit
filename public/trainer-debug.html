@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Data Debug Tool</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container { 
+            background: #2a2a2a; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+        }
+        button { 
+            background: #f1c40f; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #f39c12; }
+        pre { 
+            background: #333; 
+            padding: 10px; 
+            border-radius: 4px; 
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .error { color: #e74c3c; }
+        .success { color: #2ecc71; }
+        .info { color: #3498db; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Trainer Data Debug Tool</h1>
+    
+    <div class="container">
+        <h2>Current Status</h2>
+        <button onclick="checkTrainerData()">🔍 Check Trainer Data</button>
+        <button onclick="createTestTrainers()">➕ Create Test Trainers</button>
+        <button onclick="fixTrainerImages()">🖼️ Fix Trainer Images</button>
+        <pre id="output">Click a button to start...</pre>
+    </div>
+
+    <script type="module">
+        // Import Firebase configuration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            addDoc, 
+            updateDoc, 
+            doc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkIcLX6yoXc2PHXY59ZAQHdHqQBL8SoJs",
+            authDomain: "rebuild-fitness.firebaseapp.com",
+            projectId: "rebuild-fitness",
+            storageBucket: "rebuild-fitness.appspot.com",
+            messagingSenderId: "251034852453",
+            appId: "1:251034852453:web:9d7b72b8e7b8c8f5f7b8c8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        window.checkTrainerData = async function() {
+            try {
+                log('🔍 Checking trainer data...', 'info');
+                const trainersRef = collection(db, 'trainers');
+                const snapshot = await getDocs(trainersRef);
+                
+                log(`📊 Found ${snapshot.size} trainers in database`, 'info');
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    log(`- ${data.name}: profileImage=${!!data.profileImage}, image=${!!data.image}`, 'info');
+                    if (data.profileImage) {
+                        log(`  profileImage URL: ${data.profileImage}`, 'info');
+                    }
+                    if (data.image) {
+                        log(`  legacy image URL: ${data.image}`, 'info');
+                    }
+                });
+                
+                if (snapshot.size === 0) {
+                    log('⚠️ No trainers found in database!', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Error checking trainer data: ${error.message}`, 'error');
+            }
+        };
+
+        window.createTestTrainers = async function() {
+            try {
+                log('➕ Creating test trainers...', 'info');
+                
+                const testTrainers = [
+                    {
+                        name: 'Sagar Akula',
+                        slug: 'sagar-akula',
+                        role: 'Founder & Head Trainer',
+                        bioShort: 'Founder of Rebuild.Fit with 8+ years of experience in natural fitness.',
+                        bioLong: 'Passionate about natural fitness and transformation without harmful shortcuts.',
+                        experienceYears: 8,
+                        specializations: ['Natural Bodybuilding', 'Strength Training', 'Transformation Coaching'],
+                        certifications: ['Certified Fitness Trainer', 'Sports Nutrition Specialist'],
+                        profileImage: 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        images: [],
+                        videos: [],
+                        featuredFlag: true,
+                        acceptingNewClientsFlag: true,
+                        socialLinks: {
+                            instagram: 'https://instagram.com/rebuild.fit'
+                        },
+                        image: 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        experience: '8+ years',
+                        specialization: 'Natural Bodybuilding, Strength Training',
+                        order: 1,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    },
+                    {
+                        name: 'Priya Sharma',
+                        slug: 'priya-sharma',
+                        role: 'Yoga & Flexibility Specialist',
+                        bioShort: 'Certified yoga instructor specializing in flexibility and mindfulness.',
+                        bioLong: 'Expert in yoga, flexibility training, and holistic wellness approaches.',
+                        experienceYears: 6,
+                        specializations: ['Yoga', 'Flexibility Training', 'Mindfulness'],
+                        certifications: ['Certified Yoga Instructor', 'Flexibility Specialist'],
+                        profileImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        images: [],
+                        videos: [],
+                        featuredFlag: true,
+                        acceptingNewClientsFlag: true,
+                        socialLinks: {
+                            instagram: 'https://instagram.com/priya.yoga'
+                        },
+                        image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        experience: '6+ years',
+                        specialization: 'Yoga, Flexibility, Mindfulness',
+                        order: 2,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    },
+                    {
+                        name: 'Rajesh Kumar',
+                        slug: 'rajesh-kumar',
+                        role: 'Strength & Powerlifting Coach',
+                        bioShort: 'Expert in powerlifting and strength training with proven results.',
+                        bioLong: 'Specialized in building raw strength and powerlifting techniques.',
+                        experienceYears: 10,
+                        specializations: ['Powerlifting', 'Strength Training', 'Olympic Lifting'],
+                        certifications: ['Powerlifting Coach', 'Strength Training Specialist'],
+                        profileImage: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        images: [],
+                        videos: [],
+                        featuredFlag: true,
+                        acceptingNewClientsFlag: true,
+                        socialLinks: {
+                            instagram: 'https://instagram.com/rajesh.strength'
+                        },
+                        image: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        experience: '10+ years',
+                        specialization: 'Powerlifting, Strength Training',
+                        order: 3,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    }
+                ];
+
+                const trainersRef = collection(db, 'trainers');
+                
+                for (const trainer of testTrainers) {
+                    try {
+                        const docRef = await addDoc(trainersRef, trainer);
+                        log(`✅ Created trainer: ${trainer.name} (ID: ${docRef.id})`, 'success');
+                    } catch (error) {
+                        log(`❌ Failed to create trainer ${trainer.name}: ${error.message}`, 'error');
+                    }
+                }
+                
+                log('🎉 Finished creating test trainers!', 'success');
+                
+            } catch (error) {
+                log(`❌ Error creating test trainers: ${error.message}`, 'error');
+            }
+        };
+
+        window.fixTrainerImages = async function() {
+            try {
+                log('🖼️ Fixing trainer images...', 'info');
+                
+                const trainersRef = collection(db, 'trainers');
+                const snapshot = await getDocs(trainersRef);
+                
+                const fallbackImages = [
+                    'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                ];
+                
+                let index = 0;
+                for (const docSnap of snapshot.docs) {
+                    const data = docSnap.data();
+                    const fallbackImage = fallbackImages[index % fallbackImages.length];
+                    
+                    if (!data.profileImage && !data.image) {
+                        try {
+                            await updateDoc(doc(db, 'trainers', docSnap.id), {
+                                profileImage: fallbackImage,
+                                image: fallbackImage,
+                                updatedAt: serverTimestamp()
+                            });
+                            log(`✅ Updated image for trainer: ${data.name}`, 'success');
+                        } catch (error) {
+                            log(`❌ Failed to update trainer ${data.name}: ${error.message}`, 'error');
+                        }
+                    } else {
+                        log(`ℹ️ Trainer ${data.name} already has images`, 'info');
+                    }
+                    index++;
+                }
+                
+                log('🎉 Finished fixing trainer images!', 'success');
+                
+            } catch (error) {
+                log(`❌ Error fixing trainer images: ${error.message}`, 'error');
+            }
+        };
+
+        // Auto-check on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Trainer Data Debug Tool loaded', 'success');
+            log('Click "Check Trainer Data" to see current status', 'info');
+        });
+    </script>
+</body>
+</html>

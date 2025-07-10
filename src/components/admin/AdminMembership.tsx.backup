@@ -1,0 +1,364 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Edit2, Trash2, Plus, Save, X, Loader2, Star } from 'lucide-react';
+import { membershipsService, type Membership } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+
+const AdminMembership = () => {
+  const [memberships, setMemberships] = useState<Membership[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [activeDuration, setActiveDuration] = useState<'monthly' | 'quarterly' | 'halfyearly' | 'annual'>('monthly');
+  
+  const [formData, setFormData] = useState<Omit<Membership, 'id'>>({
+    name: '',
+    price: {
+      monthly: '',
+      quarterly: '',
+      halfyearly: '',
+      annual: ''
+    },
+    type: 'premium',
+    features: [],
+    isPopular: false
+  });
+  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = membershipsService.onSnapshot((membershipsList) => {
+      setMemberships(membershipsList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleEdit = (membership: Membership) => {
+    setEditing(membership.id!);
+    setFormData({
+      name: membership.name,
+      price: {...membership.price},
+      type: membership.type,
+      features: [...membership.features],
+      isPopular: membership.isPopular
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await membershipsService.delete(id);
+      toast({
+        title: 'Membership plan deleted',
+        description: 'Membership plan has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete membership plan',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.price.monthly) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in name and at least monthly price',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await membershipsService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Membership plan updated',
+          description: 'Membership plan has been updated successfully',
+        });
+      } else if (isAdding) {
+        await membershipsService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Membership plan added',
+          description: 'New membership plan has been added successfully',
+        });
+      }
+      
+      setFormData({
+        name: '',
+        price: {
+          monthly: '',
+          quarterly: '',
+          halfyearly: '',
+          annual: ''
+        },
+        type: 'premium',
+        features: [],
+        isPopular: false
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update membership plan' : 'Failed to add membership plan',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setFormData({
+      name: '',
+      price: {
+        monthly: '',
+        quarterly: '',
+        halfyearly: '',
+        annual: ''
+      },
+      type: 'premium',
+      features: [],
+      isPopular: false
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setFormData({
+      name: '',
+      price: {
+        monthly: '',
+        quarterly: '',
+        halfyearly: '',
+        annual: ''
+      },
+      type: 'premium',
+      features: [],
+      isPopular: false
+    });
+  };
+
+  if (loading) {
+    return <div className="text-center py-8">Loading membership plans...</div>;
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Manage Membership Plans</h2>
+        <Button onClick={startAdding} className="flex items-center gap-2">
+          <Plus size={16} /> Add New Plan
+        </Button>
+      </div>
+
+      {/* Duration Toggle */}
+      <div className="mb-6">
+        <div className="flex space-x-2 bg-rebuild-darkgray p-1 rounded-md inline-flex">
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'monthly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('monthly')}
+          >
+            Monthly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'quarterly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('quarterly')}
+          >
+            Quarterly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'halfyearly' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('halfyearly')}
+          >
+            Half-yearly
+          </button>
+          <button 
+            className={`px-3 py-1 rounded ${activeDuration === 'annual' ? 'bg-rebuild-yellow text-rebuild-black' : 'text-gray-300'}`}
+            onClick={() => setActiveDuration('annual')}
+          >
+            Annual
+          </button>
+        </div>
+      </div>
+
+      {(isAdding || editing) && (
+        <div className="bg-rebuild-darkgray p-6 rounded-lg mb-6 animate-fade-in">
+          <h3 className="text-xl font-bold mb-4">{isAdding ? 'Add New Plan' : 'Edit Plan'}</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Plan Name *</label>
+              <Input 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="e.g., STRENGTHENING"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Type</label>
+              <Select value={formData.type} onValueChange={(value) => setFormData({...formData, type: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="student">Student</SelectItem>
+                  <SelectItem value="women">Women-Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Monthly Price *</label>
+              <Input 
+                value={formData.price.monthly} 
+                onChange={(e) => setFormData({...formData, price: {...formData.price, monthly: e.target.value}})}
+                placeholder="e.g., ₹1,999"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Quarterly Price</label>
+              <Input 
+                value={formData.price.quarterly} 
+                onChange={(e) => setFormData({...formData, price: {...formData.price, quarterly: e.target.value}})}
+                placeholder="e.g., ₹5,499"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Half-yearly Price</label>
+              <Input 
+                value={formData.price.halfyearly} 
+                onChange={(e) => setFormData({...formData, price: {...formData.price, halfyearly: e.target.value}})}
+                placeholder="e.g., ₹7,499"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Annual Price</label>
+              <Input 
+                value={formData.price.annual} 
+                onChange={(e) => setFormData({...formData, price: {...formData.price, annual: e.target.value}})}
+                placeholder="e.g., ₹11,999"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Features (comma separated)</label>
+              <Input 
+                value={formData.features.join(', ')} 
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  features: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
+                })}
+                placeholder="Access to strength equipment, Gym access (6 AM - 10 PM)"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="isPopular" 
+                  checked={formData.isPopular}
+                  onCheckedChange={(checked) => setFormData({...formData, isPopular: checked as boolean})}
+                />
+                <label htmlFor="isPopular" className="text-sm font-medium">
+                  Mark as Popular Plan
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={cancelEdit} disabled={saving}>
+              <X size={16} className="mr-1" /> Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <Loader2 size={16} className="mr-1 animate-spin" />
+              ) : (
+                <Save size={16} className="mr-1" />
+              )}
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Plan Name</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Price ({activeDuration})</TableHead>
+            <TableHead>Features</TableHead>
+            <TableHead>Popular</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {memberships.map(plan => (
+            <TableRow key={plan.id}>
+              <TableCell className="font-medium">{plan.name}</TableCell>
+              <TableCell className="capitalize">{plan.type}</TableCell>
+              <TableCell>{plan.price[activeDuration] || 'N/A'}</TableCell>
+              <TableCell>
+                <div className="max-w-[200px] truncate">
+                  {plan.features.slice(0, 2).join(', ')}
+                  {plan.features.length > 2 && ` +${plan.features.length - 2} more`}
+                </div>
+              </TableCell>
+              <TableCell>
+                {plan.isPopular && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleEdit(plan)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Edit2 size={14} />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={() => handleDelete(plan.id!)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {memberships.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No membership plans found. Add your first plan to get started.
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminMembership;

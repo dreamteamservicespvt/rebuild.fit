@@ -1,80 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CTASection from '@/components/CTASection';
 import TransformationCard from '@/components/TransformationCard';
+import { transformationsService, type Transformation } from '@/lib/firebaseServices';
+import LoadingScreen from '@/components/LoadingScreen';
+import { Trophy, Filter } from 'lucide-react';
 
 const Transformations = () => {
   const [filter, setFilter] = useState('all');
-  
-  const transformations = [
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675592/hmf8rvlowbhh1dtqxq7y.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675561/pg9hi3yubqn1fjwmbd8y.jpg",
-      duration: "6 Months",
-      goal: "Fat Loss & Muscle Gain",
-      testimonial: "I lost 15kgs and gained visible muscle definition within 6 months of joining Rebuild Gym. The trainers' focus on natural methods has completely changed my lifestyle for the better."
-    },
-    {
-      id: 2,
-      name: "Vikram Singh",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677656/pdpmiteuc1g1wbicrskx.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747675897/mne0zrezdxh26uor6ygp.jpg",
-      duration: "4 Months",
-      goal: "Strength & Toning",
-      testimonial: "I've gained incredible strength and confidence without any pressure to use supplements. The coaching at Rebuild Gym has been transformational for my fitness journey."
-    },
-    {
-      id: 3,
-      name: "Arjun Desai",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676152/uzphwgmljn5womru59wz.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747676137/aoaoqoianm3btizaaspi.jpg",
-      duration: "8 Months",
-      goal: "Muscle Building",
-      testimonial: "As a student, I thought I'd need supplements to get real results. The trainers at Rebuild showed me that proper form, nutrition, and consistency are what truly matter."
-    },
-    {
-      id: 4,
-      name: "Siddharth Kapoor",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677823/gznk8fsqrrfsgs7qssac.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747677826/vtmbwu2qhnmmobrdtb1r.jpg",
-      duration: "5 Months",
-      goal: "Fat Loss",
-      testimonial: "I thought getting back in shape would be impossible with my busy schedule. Rebuild created a plan that worked with my routine and helped me lose 20kgs naturally."
-    },
-    {
-      id: 5,
-      name: "Akash Sharma",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678020/dzq9jbnylqpmjzt3s7il.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678022/vndwcp0jxmy48kry1kzk.jpg",
-      duration: "10 Months",
-      goal: "Strength & Muscle",
-      testimonial: "I was skeptical about building muscle without supplements, but Rebuild's science-backed approach proved me wrong. I've gained more strength and definition than ever before."
-    },
-    {
-      id: 6,
-      name: "Rahul Mehta",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678137/fxwjrf0jdiqvpqpunzet.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678140/afw9nplal7rde8rmigs7.jpg",
-      duration: "7 Months",
-      goal: "General Fitness",
-      testimonial: "After years of inconsistent fitness routines, Rebuild helped me establish a sustainable lifestyle that improved my energy, sleep, and overall health."
-    },
-    {
-      id: 7,
-      name: "Nikhil Verma",
-      beforeImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678014/svar6sscajch60npv7rt.jpg",
-      afterImage: "https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678012/dh7k3ezo1rpbsrdxu7jf.jpg",
-      duration: "6 Months",
-      goal: "Fat Loss & Muscle Gain",
-      testimonial: "The trainers at Rebuild showed me that transformation doesn't require shortcuts. With their guidance, I achieved results I never thought possible through natural methods."
-    }
-  ];
+  const [transformations, setTransformations] = useState<Transformation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = transformationsService.onSnapshot((transformationsData) => {
+      setTransformations(transformationsData);
+      setLoading(false);
+      setError(null);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-rebuild-black flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white mb-4">Unable to Load Transformations</h2>
+          <p className="text-gray-300 mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-rebuild-yellow text-rebuild-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   const filteredTransformations = filter === 'all' 
     ? transformations 
     : transformations.filter(t => t.goal.toLowerCase().includes(filter.toLowerCase()));
-  
+
   return (
     <div>
       {/* Hero Banner */}
@@ -138,89 +109,43 @@ const Transformations = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTransformations.map(transformation => (
-              <TransformationCard 
-                key={transformation.id}
-                name={transformation.name}
-                beforeImage={transformation.beforeImage}
-                afterImage={transformation.afterImage}
-                duration={transformation.duration}
-                goal={transformation.goal}
-                testimonial={transformation.testimonial}
-              />
-            ))}
-          </div>
+          {transformations.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-28 h-28 mx-auto mb-8 rounded-full bg-gradient-to-br from-rebuild-darkgray to-rebuild-black flex items-center justify-center shadow-xl border border-rebuild-yellow/20">
+                <Trophy size={40} className="text-rebuild-yellow" />
+              </div>
+              <h3 className="text-3xl font-bold mb-6 text-white">No Transformations Yet</h3>
+              <p className="text-gray-300 max-w-lg mx-auto text-lg leading-relaxed">
+                Our members' amazing transformation stories will be featured here. Check back soon for inspiring journeys and natural progress!
+              </p>
+              <div className="mt-8">
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="bg-gradient-to-r from-rebuild-yellow to-yellow-400 text-rebuild-black px-8 py-3 rounded-xl font-bold hover:from-yellow-400 hover:to-rebuild-yellow transition-all duration-300 transform hover:scale-105"
+                >
+                  Refresh Page
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10">
+              {filteredTransformations.map(transformation => (
+                <TransformationCard 
+                  key={transformation.id}
+                  name={transformation.name}
+                  beforeImage={transformation.beforeImage}
+                  afterImage={transformation.afterImage}
+                  duration={transformation.duration}
+                  goal={transformation.goal}
+                  testimonial={transformation.testimonial}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
       
-      {/* Video Testimonials */}
-      <section className="py-16 md:py-24 bg-rebuild-darkgray relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10 bg-gym-texture" />
-        
-        <div className="container-custom relative z-10">
-          <div className="text-center mb-14">
-            <h4 className="inline-block font-bebas text-rebuild-yellow tracking-widest border-b-2 border-rebuild-yellow mb-4 pb-1">
-              HEAR FROM OUR MEMBERS
-            </h4>
-            <h2 className="text-4xl md:text-5xl font-bold">VIDEO TESTIMONIALS</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Video 1 */}
-            <div className="bg-rebuild-black rounded-lg overflow-hidden">
-              <div className="aspect-video bg-rebuild-darkgray relative flex items-center justify-center">
-                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-rebuild-yellow/50 backdrop-blur-sm">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-rebuild-yellow cursor-pointer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 3L19 12L5 21V3Z" fill="#111111" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Deepak's Journey</h3>
-                <p className="text-gray-300 text-sm">Lost 22kg in 8 months</p>
-              </div>
-            </div>
-            
-            {/* Video 2 */}
-            <div className="bg-rebuild-black rounded-lg overflow-hidden">
-              <div className="aspect-video bg-rebuild-darkgray relative flex items-center justify-center">
-                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-rebuild-yellow/50 backdrop-blur-sm">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-rebuild-yellow cursor-pointer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 3L19 12L5 21V3Z" fill="#111111" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Meena's Story</h3>
-                <p className="text-gray-300 text-sm">From size XL to M in 6 months</p>
-              </div>
-            </div>
-            
-            {/* Video 3 */}
-            <div className="bg-rebuild-black rounded-lg overflow-hidden">
-              <div className="aspect-video bg-rebuild-darkgray relative flex items-center justify-center">
-                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-rebuild-yellow/50 backdrop-blur-sm">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-rebuild-yellow cursor-pointer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 3L19 12L5 21V3Z" fill="#111111" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Anand's Transformation</h3>
-                <p className="text-gray-300 text-sm">Gained 10kg lean muscle in 10 months</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
       
       {/* Call to Action */}
       <CTASection />

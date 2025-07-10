@@ -65,7 +65,7 @@ const Hero = () => {
         if (desktopVideoRef.current) await desktopVideoRef.current.play();
         if (mobileVideoRef.current) await mobileVideoRef.current.play();
       } catch (error) {
-        console.error("Error autoplaying video:", error);
+        // Video autoplay failed - this is expected in some browsers
       }
     };
     
@@ -145,7 +145,7 @@ const Hero = () => {
           preload="auto"
           poster="https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?auto=format&fit=crop&q=80&w=1770"
         >
-          <source src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1746949217/wxvtdjgnor3vlq1li1ou.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1751626901/rkijnrafr0e4h9pvkzvh.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         
@@ -159,7 +159,7 @@ const Hero = () => {
           muted
           preload="auto"
           poster="https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?auto=format&fit=crop&q=80&w=1770"
-          onError={(e) => console.log("Mobile video error:", e)}
+          onError={(e) => {/* Mobile video error */}}
         >
           <source 
             src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
@@ -168,49 +168,49 @@ const Hero = () => {
           Your browser does not support the video tag.
         </video>
         
-        {/* Video overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        {/* Video overlay for better text visibility - increased opacity */}
+        <div className="absolute inset-0 bg-black opacity-0"></div>
       </div>
       
       {/* Mute/Unmute Button - fixed icon order to correctly represent state */}
       <button 
         onClick={toggleMute}
-        className="absolute bottom-8 right-8 z-20 bg-rebuild-yellow text-rebuild-black p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 bg-rebuild-yellow text-rebuild-black p-2 sm:p-3 rounded-full transition-all hover:scale-110 shadow-lg"
         aria-label={isMuted ? "Unmute video" : "Mute video"}
       >
-        {isMuted ? <Volume2 size={24} /> : <VolumeX size={24} />}
+        {isMuted ? <Volume2 size={20} className="sm:w-6 sm:h-6" /> : <VolumeX size={20} className="sm:w-6 sm:h-6" />}
       </button>
       
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-rebuild-black via-rebuild-black/70 to-transparent z-10" />
+      {/* Enhanced overlay gradient for better text contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-rebuild-black via-rebuild-black/80 to-black/20 z-10" />
       
       {/* Content */}
-      <div className="container-custom relative z-20">
-        <div className="max-w-3xl">
-          <h4 className="inline-block font-bebas text-rebuild-yellow tracking-widest border-b-2 border-rebuild-yellow mb-6 pb-1">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-20">
+        <div className="max-w-4xl">
+          <h4 className="inline-block font-bebas text-rebuild-yellow tracking-widest border-b-2 border-rebuild-yellow mb-4 sm:mb-6 pb-1 drop-shadow-md text-sm sm:text-base">
             WELCOME TO
           </h4>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 text-shadow-lg leading-tight">
             <span className="block">REBUILD FITNESS</span>
           </h1>
-          <h2 className="text-xl md:text-2xl lg:text-3xl mb-8 font-light min-h-[4rem] flex items-center">
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 font-light min-h-[3rem] sm:min-h-[4rem] flex items-center text-shadow-md">
             <span>{currentQuote}</span>
-            <span className={`ml-1 inline-block w-1 h-8 bg-rebuild-yellow ${isTyping ? 'animate-blink' : 'opacity-0'}`}></span>
+            <span className={`ml-1 inline-block w-0.5 sm:w-1 h-6 sm:h-8 bg-rebuild-yellow ${isTyping ? 'animate-blink' : 'opacity-0'}`}></span>
           </h2>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/membership" className="btn-primary flex items-center justify-center">
-              JOIN US <ChevronRight size={20} className="ml-1" />
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md sm:max-w-none">
+            <Link to="/membership" className="btn-primary flex items-center justify-center text-sm sm:text-base py-3 sm:py-4 px-6 sm:px-8">
+              JOIN US <ChevronRight size={16} className="ml-1 sm:ml-2" />
             </Link>
-            <Link to="/gyms" className="btn-outline flex items-center justify-center">
-              EXPLORE BRANCHES <ChevronRight size={20} className="ml-1" />
+            <Link to="/gyms" className="btn-outline flex items-center justify-center text-sm sm:text-base py-3 sm:py-4 px-6 sm:px-8">
+              VISIT OUR GYM <ChevronRight size={16} className="ml-1 sm:ml-2" />
             </Link>
           </div>
         </div>
       </div>
       
       {/* Arrow down animation */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-6 sm:h-6">
           <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="#F6C90E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>

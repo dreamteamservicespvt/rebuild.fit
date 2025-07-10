@@ -7,16 +7,26 @@ import React, { useState, useEffect } from 'react';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoadingScreen from '@/components/LoadingScreen';
+import ScrollToTop from '@/components/ScrollToTop';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { AuthProvider } from '@/contexts/AuthContext';
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Gyms from "./pages/Gyms";
 import Transformations from "./pages/Transformations";
 import Trainers from "./pages/Trainers";
+import TrainerProfile from "./pages/TrainerProfile";
 import Membership from "./pages/Membership";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
+// Payment flow pages
+import PaymentUserInfo from "./pages/PaymentUserInfo";
+import PaymentUPI from "./pages/PaymentUPI";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -53,35 +63,53 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <LoadingScreen isLoading={loading} />
-          <Navbar />
-          <main className={`min-h-screen transition-opacity duration-500 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <LoadingScreen isLoading={loading} />
             <Routes>
-              <Route path="/admin/*" element={<Admin />} />
+              {/* Admin routes - no navbar */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/*" element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              } />
+              
+              {/* Payment flow routes - no navbar, no footer */}
+              <Route path="/payment/user-info" element={<PaymentUserInfo />} />
+              <Route path="/payment/upi" element={<PaymentUPI />} />
+              <Route path="/payment/success" element={<PaymentSuccess />} />
+              
+              {/* Main site routes - with navbar and footer */}
               <Route path="*" element={
                 <>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/gyms" element={<Gyms />} />
-                    <Route path="/transformations" element={<Transformations />} />
-                    <Route path="/trainers" element={<Trainers />} />
-                    <Route path="/membership" element={<Membership />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                  <Navbar />
+                  <main className={`min-h-screen transition-opacity duration-500 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/gyms" element={<Gyms />} />
+                      <Route path="/transformations" element={<Transformations />} />
+                      <Route path="/trainers" element={<Trainers />} />
+                      <Route path="/trainers/:slug" element={<TrainerProfile />} />
+                      <Route path="/membership" element={<Membership />} />
+                      <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:postId" element={<BlogPost />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                  <Footer />
                 </>
               } />
             </Routes>
-          </main>
-          <Footer />
-        </BrowserRouter>
-      </TooltipProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

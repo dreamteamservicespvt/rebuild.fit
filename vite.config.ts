@@ -7,6 +7,11 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    cors: {
+      origin: ["http://localhost:8080", "https://rebuildofficial-fit.firebaseapp.com"],
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "x-goog-meta-*"],
+    },
   },
   plugins: [
     react(),

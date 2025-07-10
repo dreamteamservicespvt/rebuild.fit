@@ -1,0 +1,96 @@
+// Firestore Security Rules
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Admin collection - only admin can read/write
+    match /admins/{adminId} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Public collections - everyone can read, only admin can write
+    match /gyms/{gymId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    match /trainers/{trainerId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    match /transformations/{transformationId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    match /memberships/{membershipId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    match /contact_requests/{requestId} {
+      allow read: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+      allow create: if true; // Allow public to create contact requests
+      allow update, delete: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Payments collection - public can create, only admin can read/update
+    match /payments/{paymentId} {
+      allow read: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+      allow create: if true; // Allow public to create payment records
+      allow update, delete: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Add-on services collection - public can read, only admin can write
+    match /add_on_services/{serviceId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Service bookings collection - public can create, only admin can read/update
+    match /service_bookings/{bookingId} {
+      allow read: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+      allow create: if true; // Allow public to create service bookings
+      allow update, delete: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Gym profile collection - public can read, only admin can write
+    match /gym_profile/{profileId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Team members collection - public can read, only admin can write
+    match /teamMembers/{memberId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+    
+    // Dropdown options collection - only admin can read/write
+    match /dropdown_options/{docId} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == "admin@rebuild.com";
+    }
+  }
+}

@@ -1,0 +1,510 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { transformationsService, type Transformation } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+import EnhancedImageUpload from '@/components/EnhancedImageUpload';
+import { Plus, ImageIcon, AlertCircle, Loader2, User } from 'lucide-react';
+import ResponsiveImage from '@/components/ResponsiveImage';
+
+// Import our new admin components
+import AdminLayout from './AdminLayout';
+import AdminFormField from './AdminFormField';
+import { AdminTable, TableHeader, TableBody, TableHead, TableCell, TableRow, EmptyState, LoadingState } from './AdminTable';
+import AdminActions, { FormActions } from './AdminActions';
+
+const AdminTransformations = () => {
+  const [transformations, setTransformations] = useState<Transformation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const [formData, setFormData] = useState<Omit<Transformation, 'id'>>({
+    name: '',
+    beforeImage: '',
+    afterImage: '',
+    duration: '',
+    goal: '',
+    testimonial: ''
+  });
+  
+  const { toast } = useToast();
+
+  // Form validation state
+  const [errors, setErrors] = useState<{
+    name?: string;
+    goal?: string;
+    testimonial?: string;
+    beforeImage?: string;
+    afterImage?: string;
+  }>({});
+
+  useEffect(() => {
+    const unsubscribe = transformationsService.onSnapshot((transformationsList) => {
+      setTransformations(transformationsList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const validateForm = (): boolean => {
+    const newErrors: typeof errors = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Client name is required';
+    }
+    
+    if (!formData.goal.trim()) {
+      newErrors.goal = 'Goal is required';
+    }
+    
+    if (!formData.testimonial.trim()) {
+      newErrors.testimonial = 'Testimonial is required';
+    }
+    
+    if (!formData.beforeImage && !formData.afterImage) {
+      newErrors.beforeImage = 'At least one image (before or after) is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleEdit = (transformation: Transformation) => {
+    setEditing(transformation.id!);
+    setIsAdding(false);
+    setErrors({});
+    setFormData({
+      name: transformation.name,
+      beforeImage: transformation.beforeImage,
+      afterImage: transformation.afterImage,
+      duration: transformation.duration,
+      goal: transformation.goal,
+      testimonial: transformation.testimonial
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await transformationsService.delete(id);
+      toast({
+        title: 'Transformation deleted',
+        description: 'Transformation story has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete transformation',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) return;
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await transformationsService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Transformation updated',
+          description: 'Transformation story has been updated successfully',
+        });
+      } else if (isAdding) {
+        await transformationsService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Transformation added',
+          description: 'New transformation story has been added successfully',
+        });
+      }
+      
+      setFormData({
+        name: '',
+        beforeImage: '',
+        afterImage: '',
+        duration: '',
+        goal: '',
+        testimonial: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update transformation' : 'Failed to add transformation',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setErrors({});
+    setFormData({
+      name: '',
+      beforeImage: '',
+      afterImage: '',
+      duration: '',
+      goal: '',
+      testimonial: ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setErrors({});
+    setFormData({
+      name: '',
+      beforeImage: '',
+      afterImage: '',
+      duration: '',
+      goal: '',
+      testimonial: ''
+    });
+  };
+
+  const handleBeforeImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, beforeImage: url }));
+    if (errors.beforeImage && url) {
+      setErrors(prev => ({ ...prev, beforeImage: undefined }));
+    }
+  };
+
+  const handleAfterImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, afterImage: url }));
+    if (errors.beforeImage && !formData.beforeImage && url) {
+      setErrors(prev => ({ ...prev, beforeImage: undefined }));
+    }
+  };
+
+  return (
+    <AdminLayout 
+      title="Transformation Stories"
+      description="Manage client transformation stories and testimonials"
+      status={loading ? 'info' : transformations.length === 0 ? 'warning' : 'default'}
+      statusText={loading ? 'Loading...' : transformations.length === 0 ? 'No transformations' : `${transformations.length} transformations`}
+      actions={
+        <Button onClick={startAdding} className="bg-rebuild-yellow hover:bg-yellow-500 text-rebuild-black">
+          <Plus size={16} className="mr-2" /> Add Transformation
+        </Button>
+      }
+      isLoading={loading}
+    >
+      {/* Show form when adding or editing */}
+      {(isAdding || editing) ? (
+        <div className="space-y-8">
+          {/* Back to list button */}
+          <div className="flex items-center gap-4 pb-6 border-b border-gray-700">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsAdding(false);
+                setEditing(null);
+                setFormData({
+                  name: '',
+                  beforeImage: '',
+                  afterImage: '',
+                  duration: '',
+                  goal: '',
+                  testimonial: ''
+                });
+                setErrors({});
+              }}
+              className="border-gray-600 hover:border-rebuild-yellow"
+            >
+              ← Back to List
+            </Button>
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                {isAdding ? 'Add New Transformation' : 'Edit Transformation'}
+              </h2>
+              <p className="text-gray-400">
+                {isAdding ? 'Create a new client transformation story' : 'Update transformation details'}
+              </p>
+            </div>
+          </div>
+
+          {/* Client Information Section */}
+          <Card className="bg-rebuild-darkgray border-gray-700">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-white flex items-center gap-3 text-lg">
+                <User className="text-rebuild-yellow" size={24} />
+                Client Information
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Enter the client's details and transformation story
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <AdminFormField
+                  id="name"
+                  label="Client Name"
+                  required
+                  error={errors.name}
+                  tooltip="The client's name or alias for privacy"
+                  fullWidth
+                >
+                  <Input 
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="Enter client name"
+                    className={cn(
+                      "w-full h-12 rounded-lg border-2 border-gray-600 focus:border-rebuild-yellow bg-rebuild-black text-white px-4",
+                      "transition-all duration-200 placeholder:text-gray-500",
+                      errors.name && "border-red-500 focus:border-red-500"
+                    )}
+                  />
+                </AdminFormField>
+                
+                <AdminFormField
+                  id="duration"
+                  label="Transformation Duration"
+                  tooltip="How long did the transformation take? e.g., '3 months', '6 weeks'"
+                  fullWidth
+                >
+                  <Input 
+                    id="duration"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                    placeholder="e.g., 3 months"
+                    className="w-full h-12 rounded-lg border-2 border-gray-600 focus:border-rebuild-yellow bg-rebuild-black text-white px-4 transition-all duration-200 placeholder:text-gray-500"
+                  />
+                </AdminFormField>
+              </div>
+              
+              <AdminFormField
+                id="goal"
+                label="Goal / Achievement"
+                required
+                error={errors.goal}
+                tooltip="What was the client's main goal and what did they achieve?"
+                fullWidth
+              >
+                <Textarea 
+                  id="goal"
+                  value={formData.goal}
+                  onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                  placeholder="Describe the client's goal and achievements..."
+                  className={cn(
+                    "w-full min-h-[100px] rounded-lg border-2 border-gray-600 focus:border-rebuild-yellow bg-rebuild-black text-white p-4",
+                    "transition-all duration-200 placeholder:text-gray-500 resize-none",
+                    errors.goal && "border-red-500 focus:border-red-500"
+                  )}
+                />
+              </AdminFormField>
+              
+              <AdminFormField
+                id="testimonial"
+                label="Client Testimonial"
+                required
+                error={errors.testimonial}
+                tooltip="A quote or testimonial from the client about their experience"
+                fullWidth
+              >
+                <Textarea 
+                  id="testimonial"
+                  value={formData.testimonial}
+                  onChange={(e) => setFormData({...formData, testimonial: e.target.value})}
+                  placeholder="Enter the client's testimonial or feedback..."
+                  className={cn(
+                    "w-full min-h-[120px] rounded-lg border-2 border-gray-600 focus:border-rebuild-yellow bg-rebuild-black text-white p-4",
+                    "transition-all duration-200 placeholder:text-gray-500 resize-none",
+                    errors.testimonial && "border-red-500 focus:border-red-500"
+                  )}
+                />
+              </AdminFormField>
+            </CardContent>
+          </Card>
+
+          {/* Images Section */}
+          <Card className="bg-rebuild-darkgray border-gray-700">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-white flex items-center gap-3 text-lg">
+                <ImageIcon className="text-rebuild-yellow" size={24} />
+                Transformation Images
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Upload before and after photos showing the transformation progress
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <AdminFormField
+                  id="beforeImage"
+                  label="Before Image"
+                  error={errors.beforeImage}
+                  description="Upload the 'before' transformation photo"
+                  fullWidth
+                >
+                  <div className="w-full">
+                    <EnhancedImageUpload
+                      onImageUploaded={(url: string) => setFormData({...formData, beforeImage: url})}
+                      currentImage={formData.beforeImage}
+                      uploadPath="transformations/"
+                      aspectRatio="portrait"
+                      previewSize="lg"
+                      placeholder="Upload before photo"
+                      variant="card"
+                    />
+                  </div>
+                </AdminFormField>
+                
+                <AdminFormField
+                  id="afterImage"
+                  label="After Image"
+                  description="Upload the 'after' transformation photo"
+                  fullWidth
+                >
+                  <div className="w-full">
+                    <EnhancedImageUpload
+                      onImageUploaded={(url: string) => setFormData({...formData, afterImage: url})}
+                      currentImage={formData.afterImage}
+                      uploadPath="transformations/"
+                      aspectRatio="portrait"
+                      previewSize="lg"
+                      placeholder="Upload after photo"
+                      variant="card"
+                    />
+                  </div>
+                </AdminFormField>
+              </div>
+              
+              {(!formData.beforeImage && !formData.afterImage) && errors.beforeImage && (
+                <div className="flex items-center gap-2 text-red-500 text-sm bg-red-50/10 border border-red-500/30 rounded-lg p-3">
+                  <AlertCircle size={16} />
+                  {errors.beforeImage}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Form Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-gray-700">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsAdding(false);
+                setEditing(null);
+                setFormData({
+                  name: '',
+                  beforeImage: '',
+                  afterImage: '',
+                  duration: '',
+                  goal: '',
+                  testimonial: ''
+                });
+                setErrors({});
+              }}
+              className="px-6 py-3 border-gray-600 hover:border-rebuild-yellow"
+              disabled={saving}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              disabled={saving}
+              className="px-8 py-3 bg-rebuild-yellow hover:bg-yellow-500 text-rebuild-black font-semibold"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {isAdding ? 'Creating...' : 'Updating...'}
+                </>
+              ) : (
+                isAdding ? 'Create Story' : 'Update Story'
+              )}
+            </Button>
+          </div>
+        </div>
+          />
+        </div>
+      ) : (
+        // Show list when not adding or editing
+        <div className="space-y-4">
+          {loading ? (
+            <LoadingState message="Loading transformation stories..." />
+          ) : transformations.length === 0 ? (
+            <EmptyState 
+              icon={<ImageIcon size={40} />}
+              title="No transformation stories yet"
+              description="Add your first client transformation story to showcase your gym's success stories."
+              action={
+                <Button onClick={startAdding} className="bg-rebuild-yellow hover:bg-yellow-500 text-rebuild-black">
+                  <Plus size={16} className="mr-2" /> Add Transformation
+                </Button>
+              }
+            />
+          ) : (
+            <AdminTable>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Before / After</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Goal</TableHead>
+                  <TableHead>Testimonial</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transformations.map(item => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.name}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        {item.beforeImage && (
+                          <div className="relative w-12 h-12 rounded-md overflow-hidden border border-gray-700">
+                            <ResponsiveImage 
+                              src={item.beforeImage} 
+                              alt={`Before - ${item.name}`} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        {item.afterImage && (
+                          <div className="relative w-12 h-12 rounded-md overflow-hidden border border-gray-700">
+                            <ResponsiveImage 
+                              src={item.afterImage} 
+                              alt={`After - ${item.name}`} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{item.duration || 'N/A'}</TableCell>
+                    <TableCell>{item.goal}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">{item.testimonial}</TableCell>
+                    <TableCell className="text-right">
+                      <AdminActions
+                        onEdit={() => handleEdit(item)}
+                        onDelete={() => handleDelete(item.id!)}
+                        itemName={`transformation for ${item.name}`}
+                        disabled={editing !== null || isAdding}
+                        compact
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </AdminTable>
+          )}
+        </div>
+      )}
+    </AdminLayout>
+  );
+};
+
+export default AdminTransformations;

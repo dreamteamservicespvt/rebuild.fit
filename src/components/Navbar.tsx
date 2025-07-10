@@ -49,8 +49,8 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Our Gyms', path: '/gyms' },
+    { name: 'About', path: '/about' },
+    { name: 'OUR GYM', path: '/gyms' },
     { name: 'Transformations', path: '/transformations' },
     { name: 'Trainers', path: '/trainers' },
     { name: 'Membership', path: '/membership' },
@@ -62,34 +62,34 @@ const Navbar = () => {
     <nav 
       className={cn(
         'fixed w-full z-50 transition-all duration-300',
-        scrolled ? 'bg-rebuild-black/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
+        scrolled ? 'bg-rebuild-black/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-2 sm:py-4'
       )}
     >
-      <div className="container-custom flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-3 group">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 flex justify-between items-center">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
           <div className="relative overflow-hidden">
             <img 
               src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470571/cmvlwiujoqiloeitncik.png" 
               alt="Rebuild.fit Logo" 
-              className="h-12 sm:h-16 w-auto transition-transform duration-300 group-hover:scale-110" 
+              className="h-10 sm:h-12 md:h-16 w-auto transition-transform duration-300 group-hover:scale-110" 
             />
             <div className="absolute inset-0 bg-rebuild-yellow/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
           </div>
           <img
             src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747482873/lissllpnwgq5z2hu7ukz.png"
             alt="Rebuild Logo"
-            className="h-8 sm:h-10 w-auto transition-all duration-300"
+            className="h-6 sm:h-8 md:h-10 w-auto transition-all duration-300"
           />
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex space-x-8">
+        <div className="hidden lg:flex space-x-6 xl:space-x-8">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={cn(
-                "text-sm uppercase tracking-widest font-medium transition-colors relative",
+                "text-xs xl:text-sm uppercase tracking-widest font-medium transition-colors relative py-2",
                 isActive(link.path) 
                   ? "text-rebuild-yellow" 
                   : "text-white/80 hover:text-rebuild-yellow"
@@ -105,11 +105,11 @@ const Navbar = () => {
 
         {/* Mobile Navigation Toggle */}
         <button 
-          className="lg:hidden text-white p-2"
+          className="lg:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <Menu size={20} className="sm:w-6 sm:h-6" />}
         </button>
       </div>
 
@@ -119,15 +119,15 @@ const Navbar = () => {
           "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out overflow-y-auto",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
-        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
+        style={{ top: scrolled ? '56px' : '64px', height: scrolled ? 'calc(100vh - 56px)' : 'calc(100vh - 64px)' }}
       >
-        <div className="flex flex-col space-y-6 p-6 min-h-full pb-20">
+        <div className="flex flex-col space-y-4 sm:space-y-6 p-4 sm:p-6 min-h-full pb-20">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={cn(
-                "text-xl font-bebas tracking-wider py-2 transition-colors",
+                "text-lg sm:text-xl font-bebas tracking-wider py-2 transition-colors border-b border-white/10 last:border-b-0",
                 isActive(link.path) 
                   ? "text-rebuild-yellow" 
                   : "text-white/80 hover:text-rebuild-yellow"
@@ -139,7 +139,7 @@ const Navbar = () => {
           ))}
           <Link 
             to="/membership" 
-            className="btn-primary mt-6 text-center"
+            className="btn-primary mt-4 sm:mt-6 text-center py-3 sm:py-4 text-sm sm:text-base"
             onClick={closeMenu}
           >
             JOIN NOW

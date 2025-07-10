@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CTASection from '@/components/CTASection';
 import TrainerCard from '@/components/TrainerCard';
+import { TrainerGridSkeleton } from '@/components/TrainerCardSkeleton';
+import { enhancedTrainersService, type TrainerProfile } from '@/lib/firebaseServices';
+import { Loader2, Users } from 'lucide-react';
 
 const Trainers = () => {
+  const [trainers, setTrainers] = useState<TrainerProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const scrollToBooking = () => {
+    const bookingSection = document.getElementById('book');
+    if (bookingSection) {
+      bookingSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+  
+  useEffect(() => {
+    // Fetch trainers from Firebase
+    const unsubscribe = enhancedTrainersService.onSnapshot((trainersList) => {
+      setTrainers(trainersList);
+      setLoading(false);
+    });
+    
+    return unsubscribe;
+  }, []);
+
+  // Handle URL hash navigation (e.g., from Index page)
+  useEffect(() => {
+    if (window.location.hash === '#book') {
+      setTimeout(() => {
+        scrollToBooking();
+      }, 100); // Small delay to ensure page is rendered
+    }
+  }, []);
+
   return (
     <div>
       {/* Hero Banner */}
@@ -95,47 +130,41 @@ const Trainers = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-            <TrainerCard 
-              name="Sagar Akula"
-              role="Founder & Head Trainer"
-              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470852/zhss0e6f61e0nccafwl6.jpg"
-              experience="10+ Years"
-              specialization="Natural Bodybuilding & Transformation"
-            />
-            
-            <TrainerCard 
-              name="Chandu"
-              role="Partner & Head Trainer"
-              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678656/ifafg4cds1vj46oqmth4.jpg"
-              experience="8 Years"
-              specialization="Workout Plan & Personalized Diet Planning with Natural Transformation"
-            />
-              <TrainerCard 
-              name="Vasu"
-              role="Strength Coach"
-              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678982/fss5ijkf6cb8grzpdkco.jpg"
-              experience="7 Years"
-              specialization="Powerlifting & Sports Performance"
-            />
-            <TrainerCard 
-              name="Revathi"
-              role="Women's Fitness Coach"
-              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678979/gymlbrwtlgb4quxyksej.jpg"
-              experience="6 Years"
-              specialization="Toning & Weight Management"
-            />
-            
-            <TrainerCard 
-              name="Aparna"
-              role="Fitness Instructor"
-              image="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747678984/b2aus5dgw4lnb09hmuha.jpg"
-              experience="5 Years"
-              specialization="Functional Training & Nutrition"
-            />
-            
-          
-          </div>
+          {loading ? (
+            <TrainerGridSkeleton count={8} />
+          ) : trainers.length === 0 ? (
+            <div className="text-center py-10">
+              <div className="bg-rebuild-black/40 p-8 rounded-lg max-w-md mx-auto">
+                <Users size={48} className="text-rebuild-yellow mb-4 mx-auto" />
+                <h3 className="text-xl font-bold mb-2">No Trainers Found</h3>
+                <p className="text-gray-400 mb-4">Our trainer profiles are currently being updated. Please check back soon.</p>
+                <a href="#book" className="inline-block bg-rebuild-yellow text-rebuild-black px-6 py-3 rounded-md font-bold hover:bg-yellow-400 transition-colors">
+                  Request More Information
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-4">
+              {trainers.map((trainer, index) => (
+                <div 
+                  key={trainer.id}
+                  className="animate-slide-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <TrainerCard 
+                    name={trainer.name}
+                    role={trainer.role}
+                    image={trainer.profileImage || trainer.image} // Use new profileImage field with fallback
+                    experience={trainer.experienceYears ? `${trainer.experienceYears} years` : trainer.experience} // Use new field with fallback
+                    specialization={trainer.specializations?.join(', ') || trainer.specialization} // Use new array field with fallback
+                    className="h-full w-full max-w-sm mx-auto"
+                    onBookClick={scrollToBooking}
+                    slug={trainer.slug} // Pass slug for profile linking
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
       
@@ -184,10 +213,11 @@ const Trainers = () => {
                 <select className="w-full bg-rebuild-black border border-gray-700 rounded-md px-4 py-2 text-white focus:border-rebuild-yellow focus:outline-none">
                   <option>No preference</option>
                   <option>Sagar Akula - Founder & Head Trainer</option>
-                  <option>Chandu - Partner & Head Trainer</option>
-                  <option>Revathi - Women's Fitness Coach</option>
-                  <option>Aparna - Fitness Instructor</option>
-                  <option>Vasu - Strength Coach</option>
+                  {trainers.map((trainer) => (
+                    <option key={trainer.id}>
+                      {trainer.name} - {trainer.role}
+                    </option>
+                  ))}
                 </select>
               </div>
               

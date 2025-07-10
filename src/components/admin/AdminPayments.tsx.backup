@@ -1,0 +1,513 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { 
+  Eye, Download, Search, Filter, CheckCircle, XCircle, Clock, 
+  CreditCard, User, Phone, Mail, Calendar, DollarSign 
+} from 'lucide-react';
+import { paymentsService, type Payment } from '@/lib/firebaseServices';
+import { toast } from '@/lib/toast';
+import AdminLayout from './AdminLayout';
+import { AdminTable, TableHeader, TableBody, TableHead, TableCell, TableRow, EmptyState, LoadingState } from './AdminTable';
+import ResponsiveImage from '@/components/ResponsiveImage';
+import { 
+  generatePaymentReceipt, 
+  formatCurrency, 
+  getDurationDisplayName,
+  type PaymentReceiptData 
+} from '@/lib/upiPaymentUtils';
+import { motion } from 'framer-motion';
+import { Timestamp } from 'firebase/firestore';
+
+const AdminPayments = () => {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [filteredPayments, setFilteredPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showScreenshotModal, setShowScreenshotModal] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Subscribe to payments collection
+    const unsubscribe = paymentsService.onSnapshot((paymentsData) => {
+      const sortedPayments = paymentsData.sort((a, b) => 
+        b.paymentDate.toMillis() - a.paymentDate.toMillis()
+      );
+      setPayments(sortedPayments);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // Filter payments based on search term and status
+    let filtered = payments;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(payment =>
+        payment.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.phone.includes(searchTerm) ||
+        payment.membershipName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (payment.id && payment.id.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(payment => payment.status === statusFilter);
+    }
+
+    setFilteredPayments(filtered);
+  }, [payments, searchTerm, statusFilter]);
+
+  const getStatusBadge = (status: Payment['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+          <Clock className="w-3 h-3 mr-1" />
+          Pending
+        </Badge>;
+      case 'verified':
+        return <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          Verified
+        </Badge>;
+      case 'rejected':
+        return <Badge variant="secondary" className="bg-red-500/20 text-red-400 border-red-500/30">
+          <XCircle className="w-3 h-3 mr-1" />
+          Rejected
+        </Badge>;
+      default:
+        return <Badge variant="secondary">Unknown</Badge>;
+    }
+  };
+
+  const handleStatusUpdate = async (paymentId: string, newStatus: Payment['status']) => {
+    setUpdatingStatus(paymentId);
+    try {
+      await paymentsService.update(paymentId, { 
+        status: newStatus,
+        verificationDate: Timestamp.now()
+      });
+      toast.success("Status Updated", `Payment status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      toast.error("Update Failed", "Failed to update payment status");
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
+  const handleDownloadReceipt = async (payment: Payment) => {
+    setDownloadingPDF(true);
+    try {
+      const receiptData: PaymentReceiptData = {
+        paymentId: payment.id!,
+        fullName: payment.fullName,
+        email: payment.email,
+        phone: payment.phone,
+        membershipName: payment.membershipName,
+        membershipType: payment.membershipType,
+        duration: getDurationDisplayName(payment.duration),
+        originalPrice: payment.originalPrice,
+        finalAmount: payment.finalAmount,
+        couponCode: payment.couponCode,
+        discountAmount: payment.discountAmount,
+        paymentDate: payment.paymentDate.toDate(),
+        transactionNote: payment.transactionNote
+      };
+
+      const pdfBlob = await generatePaymentReceipt(receiptData);
+      
+      // Create download link
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Rebuild_Gym_Receipt_${payment.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success("Downloaded", "Receipt downloaded successfully");
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error("Download Failed", "Failed to generate receipt PDF");
+    } finally {
+      setDownloadingPDF(false);
+    }
+  };
+
+  const getPaymentStats = () => {
+    const totalPayments = payments.length;
+    const pendingPayments = payments.filter(p => p.status === 'pending').length;
+    const verifiedPayments = payments.filter(p => p.status === 'verified').length;
+    const totalRevenue = payments
+      .filter(p => p.status === 'verified')
+      .reduce((sum, p) => sum + p.finalAmount, 0);
+
+    return { totalPayments, pendingPayments, verifiedPayments, totalRevenue };
+  };
+
+  const stats = getPaymentStats();
+
+  return (
+    <AdminLayout
+      title="Payment Management"
+      description="Manage and verify customer payments"
+    >
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card className="bg-rebuild-darkgray border-gray-700">
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <CreditCard className="w-8 h-8 text-blue-400 mr-3" />
+              <div>
+                <p className="text-2xl font-bold text-white">{stats.totalPayments}</p>
+                <p className="text-gray-400 text-sm">Total Payments</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-rebuild-darkgray border-gray-700">
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Clock className="w-8 h-8 text-yellow-400 mr-3" />
+              <div>
+                <p className="text-2xl font-bold text-white">{stats.pendingPayments}</p>
+                <p className="text-gray-400 text-sm">Pending Verification</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-rebuild-darkgray border-gray-700">
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <CheckCircle className="w-8 h-8 text-green-400 mr-3" />
+              <div>
+                <p className="text-2xl font-bold text-white">{stats.verifiedPayments}</p>
+                <p className="text-gray-400 text-sm">Verified Payments</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-rebuild-darkgray border-gray-700">
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <DollarSign className="w-8 h-8 text-rebuild-yellow mr-3" />
+              <div>
+                <p className="text-2xl font-bold text-white">{formatCurrency(stats.totalRevenue)}</p>
+                <p className="text-gray-400 text-sm">Total Revenue</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <Card className="bg-rebuild-darkgray border-gray-700 mb-6">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center">
+            <Filter className="w-5 h-5 mr-2" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Search */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search by name, email, phone, or payment ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-rebuild-black border-gray-600 text-white"
+                />
+              </div>
+            </div>
+
+            {/* Status Filter */}
+            <div className="w-48">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="bg-rebuild-black border-gray-600 text-white">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent className="bg-rebuild-black border-gray-600">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Payments Table */}
+      <Card className="bg-rebuild-darkgray border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white">Payment Records</CardTitle>
+          <CardDescription className="text-gray-400">
+            Showing {filteredPayments.length} of {payments.length} payments
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <LoadingState />
+          ) : filteredPayments.length === 0 ? (
+            <EmptyState 
+              icon={<CreditCard className="w-8 h-8" />}
+              title={searchTerm || statusFilter !== 'all' ? "No matching payments" : "No payments yet"}
+              description={searchTerm || statusFilter !== 'all' 
+                ? "Try adjusting your search criteria" 
+                : "Payment records will appear here once customers start purchasing memberships"
+              }
+            />
+          ) : (
+            <AdminTable>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Membership</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredPayments.map((payment) => (
+                  <TableRow key={payment.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-white">{payment.fullName}</div>
+                        <div className="text-sm text-gray-400">{payment.email}</div>
+                        <div className="text-sm text-gray-400">{payment.phone}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-white">{payment.membershipName}</div>
+                        <div className="text-sm text-gray-400 capitalize">
+                          {payment.membershipType} • {getDurationDisplayName(payment.duration)}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium text-rebuild-yellow">
+                        {formatCurrency(payment.finalAmount)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(payment.status)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-300">
+                        {payment.paymentDate.toDate().toLocaleDateString()}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedPayment(payment);
+                            setShowDetailsModal(true);
+                          }}
+                          className="text-blue-400 hover:text-blue-300"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownloadReceipt(payment)}
+                          disabled={downloadingPDF}
+                          className="text-green-400 hover:text-green-300"
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </AdminTable>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Payment Details Modal */}
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+        <DialogContent className="bg-rebuild-darkgray border-gray-700 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <CreditCard className="w-5 h-5 mr-2 text-rebuild-yellow" />
+              Payment Details
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedPayment && (
+            <div className="space-y-6">
+              {/* Customer Information */}
+              <div className="bg-rebuild-black rounded-lg p-4">
+                <h3 className="font-bold text-white mb-3 flex items-center">
+                  <User className="w-4 h-4 mr-2" />
+                  Customer Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Name:</span>
+                    <p className="text-white">{selectedPayment.fullName}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Gender:</span>
+                    <p className="text-white capitalize">{selectedPayment.gender}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Email:</span>
+                    <p className="text-white">{selectedPayment.email}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Phone:</span>
+                    <p className="text-white">{selectedPayment.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Membership Details */}
+              <div className="bg-rebuild-black rounded-lg p-4">
+                <h3 className="font-bold text-white mb-3 flex items-center">
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Membership Details
+                </h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Plan:</span>
+                    <p className="text-white">{selectedPayment.membershipName}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Type:</span>
+                    <p className="text-white capitalize">{selectedPayment.membershipType}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Duration:</span>
+                    <p className="text-white">{getDurationDisplayName(selectedPayment.duration)}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Amount:</span>
+                    <p className="text-rebuild-yellow font-bold">{formatCurrency(selectedPayment.finalAmount)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Information */}
+              <div className="bg-rebuild-black rounded-lg p-4">
+                <h3 className="font-bold text-white mb-3 flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Payment Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Payment ID:</span>
+                    <p className="text-white font-mono">{selectedPayment.id}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">UPI ID:</span>
+                    <p className="text-white font-mono">{selectedPayment.upiId}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Payment Date:</span>
+                    <p className="text-white">{selectedPayment.paymentDate.toDate().toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Status:</span>
+                    <div className="mt-1">{getStatusBadge(selectedPayment.status)}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Screenshot */}
+              <div className="bg-rebuild-black rounded-lg p-4">
+                <h3 className="font-bold text-white mb-3">Payment Screenshot</h3>
+                <div className="cursor-pointer" onClick={() => setShowScreenshotModal(true)}>
+                  <ResponsiveImage
+                    src={selectedPayment.screenshotUrl}
+                    alt="Payment Screenshot"
+                    className="max-w-full max-h-64 rounded-lg border border-gray-600"
+                  />
+                  <p className="text-gray-400 text-sm mt-2">Click to view full size</p>
+                </div>
+              </div>
+
+              {/* Status Actions */}
+              {selectedPayment.status === 'pending' && (
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={() => {
+                      handleStatusUpdate(selectedPayment.id!, 'verified');
+                      setShowDetailsModal(false);
+                    }}
+                    disabled={updatingStatus === selectedPayment.id}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Verify Payment
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleStatusUpdate(selectedPayment.id!, 'rejected');
+                      setShowDetailsModal(false);
+                    }}
+                    disabled={updatingStatus === selectedPayment.id}
+                    variant="destructive"
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Reject Payment
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Screenshot Modal */}
+      <Dialog open={showScreenshotModal} onOpenChange={setShowScreenshotModal}>
+        <DialogContent className="bg-rebuild-darkgray border-gray-700 max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-white">Payment Screenshot</DialogTitle>
+          </DialogHeader>
+          {selectedPayment && (
+            <div className="text-center">
+              <ResponsiveImage
+                src={selectedPayment.screenshotUrl}
+                alt="Payment Screenshot"
+                className="max-w-full max-h-[70vh] mx-auto rounded-lg"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </AdminLayout>
+  );
+};
+
+export default AdminPayments;

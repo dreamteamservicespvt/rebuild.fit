@@ -14,6 +14,8 @@ export default {
       fontFamily: {
         'bebas': ['"Bebas Neue"', 'sans-serif'],
         'poppins': ['Poppins', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif'],
+        'montserrat': ['Montserrat', 'sans-serif'],
       },
       keyframes: {
         blink: {

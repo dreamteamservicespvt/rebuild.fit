@@ -1,0 +1,315 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Edit2, Trash2, Plus, Save, X, Loader2 } from 'lucide-react';
+import { transformationsService, type Transformation } from '@/lib/firebaseServices';
+import { useToast } from '@/hooks/use-toast';
+import ImageUpload from '@/components/ImageUpload';
+
+const AdminTransformations = () => {
+  const [transformations, setTransformations] = useState<Transformation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const [formData, setFormData] = useState<Omit<Transformation, 'id'>>({
+    name: '',
+    beforeImage: '',
+    afterImage: '',
+    duration: '',
+    goal: '',
+    testimonial: ''
+  });
+  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const unsubscribe = transformationsService.onSnapshot((transformationsList) => {
+      setTransformations(transformationsList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleEdit = (transformation: Transformation) => {
+    setEditing(transformation.id!);
+    setFormData({
+      name: transformation.name,
+      beforeImage: transformation.beforeImage,
+      afterImage: transformation.afterImage,
+      duration: transformation.duration,
+      goal: transformation.goal,
+      testimonial: transformation.testimonial
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await transformationsService.delete(id);
+      toast({
+        title: 'Transformation deleted',
+        description: 'Transformation story has been deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete transformation',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.goal || !formData.testimonial) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editing) {
+        await transformationsService.update(editing, formData);
+        setEditing(null);
+        toast({
+          title: 'Transformation updated',
+          description: 'Transformation story has been updated successfully',
+        });
+      } else if (isAdding) {
+        await transformationsService.create(formData);
+        setIsAdding(false);
+        toast({
+          title: 'Transformation added',
+          description: 'New transformation story has been added successfully',
+        });
+      }
+      
+      setFormData({
+        name: '',
+        beforeImage: '',
+        afterImage: '',
+        duration: '',
+        goal: '',
+        testimonial: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: editing ? 'Failed to update transformation' : 'Failed to add transformation',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startAdding = () => {
+    setIsAdding(true);
+    setEditing(null);
+    setFormData({
+      name: '',
+      beforeImage: '',
+      afterImage: '',
+      duration: '',
+      goal: '',
+      testimonial: ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setIsAdding(false);
+    setFormData({
+      name: '',
+      beforeImage: '',
+      afterImage: '',
+      duration: '',
+      goal: '',
+      testimonial: ''
+    });
+  };
+
+  const handleBeforeImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, beforeImage: url }));
+  };
+
+  const handleAfterImageUploaded = (url: string) => {
+    setFormData(prev => ({ ...prev, afterImage: url }));
+  };
+
+  if (loading) {
+    return <div className="text-center py-8">Loading transformations...</div>;
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Manage Transformations</h2>
+        <Button onClick={startAdding} className="flex items-center gap-2">
+          <Plus size={16} /> Add New Transformation
+        </Button>
+      </div>
+
+      {(isAdding || editing) && (
+        <div className="bg-rebuild-darkgray p-6 rounded-lg mb-6 animate-fade-in">
+          <h3 className="text-xl font-bold mb-4">{isAdding ? 'Add New Transformation' : 'Edit Transformation'}</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name *</label>
+              <Input 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="Enter client name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Duration</label>
+              <Input 
+                value={formData.duration} 
+                onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                placeholder="e.g., 6 months"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Goal *</label>
+              <Input 
+                value={formData.goal} 
+                onChange={(e) => setFormData({...formData, goal: e.target.value})}
+                placeholder="e.g., Weight Loss, Muscle Gain"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Before Image</label>
+              <ImageUpload
+                onImageUploaded={handleBeforeImageUploaded}
+                currentImage={formData.beforeImage}
+                uploadPath="transformations/before/"
+              />
+              {formData.beforeImage && (
+                <Input 
+                  value={formData.beforeImage} 
+                  onChange={(e) => setFormData({...formData, beforeImage: e.target.value})}
+                  placeholder="Or enter image URL"
+                  className="mt-2"
+                />
+              )}
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">After Image</label>
+              <ImageUpload
+                onImageUploaded={handleAfterImageUploaded}
+                currentImage={formData.afterImage}
+                uploadPath="transformations/after/"
+              />
+              {formData.afterImage && (
+                <Input 
+                  value={formData.afterImage} 
+                  onChange={(e) => setFormData({...formData, afterImage: e.target.value})}
+                  placeholder="Or enter image URL"
+                  className="mt-2"
+                />
+              )}
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Testimonial *</label>
+              <Textarea 
+                value={formData.testimonial} 
+                onChange={(e) => setFormData({...formData, testimonial: e.target.value})}
+                className="min-h-[100px]"
+                placeholder="Enter client testimonial"
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={cancelEdit} disabled={saving}>
+              <X size={16} className="mr-1" /> Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <Loader2 size={16} className="mr-1 animate-spin" />
+              ) : (
+                <Save size={16} className="mr-1" />
+              )}
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Before / After</TableHead>
+            <TableHead>Duration</TableHead>
+            <TableHead>Goal</TableHead>
+            <TableHead>Testimonial</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transformations.map(item => (
+            <TableRow key={item.id}>
+              <TableCell className="font-medium">{item.name}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  {item.beforeImage && (
+                    <img src={item.beforeImage} alt="Before" className="w-8 h-8 object-cover rounded" />
+                  )}
+                  {item.afterImage && (
+                    <img src={item.afterImage} alt="After" className="w-8 h-8 object-cover rounded" />
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>{item.duration}</TableCell>
+              <TableCell>{item.goal}</TableCell>
+              <TableCell className="max-w-[200px] truncate">{item.testimonial}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleEdit(item)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Edit2 size={14} />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={() => handleDelete(item.id!)}
+                    disabled={editing !== null || isAdding}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {transformations.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No transformations found. Add your first transformation story to get started.
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminTransformations;

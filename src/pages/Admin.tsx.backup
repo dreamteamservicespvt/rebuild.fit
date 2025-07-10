@@ -1,0 +1,279 @@
+import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LogOut, User, Home, Building2, Users, Camera, CreditCard, FileText, MessageSquare, Settings, Activity, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { EnhancedButton } from '@/components/ui/enhanced-button';
+import { AdminCard } from '@/components/ui/admin-card';
+
+// Import admin components
+import AdminGyms from '@/components/admin/AdminGyms';
+import AdminTrainers from '@/components/admin/AdminTrainers';
+import AdminTransformations from '@/components/admin/AdminTransformations';
+import AdminMembership from '@/components/admin/AdminMembership';
+import AdminBlog from '@/components/admin/AdminBlog';
+import AdminContacts from '@/components/admin/AdminContacts';
+
+const Admin = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/admin/login');
+  };
+
+  const handleBackToSite = () => {
+    navigate('/');
+  };
+
+  return (
+    <div className="min-h-screen bg-rebuild-black">
+      {/* Admin Header */}
+      <header className="bg-rebuild-darkgray border-b border-gray-700 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-rebuild-yellow">
+              REBUILD<span className="text-white">.FIT</span>
+            </h1>
+            <span className="text-gray-400">Admin Dashboard</span>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-white">
+              <User size={16} />
+              <span className="text-sm">{user?.email}</span>
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBackToSite}
+              className="text-rebuild-yellow border-rebuild-yellow hover:bg-rebuild-yellow hover:text-rebuild-black"
+            >
+              <Home size={16} className="mr-2" />
+              Back to Site
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+            >
+              <LogOut size={16} className="mr-2" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Admin Content */}
+      <div className="p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-7 bg-rebuild-darkgray">
+            <TabsTrigger 
+              value="overview" 
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gyms"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <Building2 size={16} className="mr-2" />
+              Gyms
+            </TabsTrigger>
+            <TabsTrigger 
+              value="trainers"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <Users size={16} className="mr-2" />
+              Trainers
+            </TabsTrigger>
+            <TabsTrigger 
+              value="transformations"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <Camera size={16} className="mr-2" />
+              Transformations
+            </TabsTrigger>
+            <TabsTrigger 
+              value="membership"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <CreditCard size={16} className="mr-2" />
+              Membership
+            </TabsTrigger>
+            <TabsTrigger 
+              value="blog"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <FileText size={16} className="mr-2" />
+              Blog
+            </TabsTrigger>
+            <TabsTrigger 
+              value="contacts"
+              className="data-[state=active]:bg-rebuild-yellow data-[state=active]:text-rebuild-black"
+            >
+              <MessageSquare size={16} className="mr-2" />
+              Contacts
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Building2 className="mr-2 text-rebuild-yellow" />
+                    Gyms Management
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Manage gym locations and branch information
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('gyms')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    Manage Gyms
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Users className="mr-2 text-rebuild-yellow" />
+                    Trainers Management
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Add, edit, and manage trainer profiles
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('trainers')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    Manage Trainers
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Camera className="mr-2 text-rebuild-yellow" />
+                    Transformations
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Showcase client transformation stories
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('transformations')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    Manage Transformations
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <CreditCard className="mr-2 text-rebuild-yellow" />
+                    Membership Plans
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Configure membership plans and pricing
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('membership')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    Manage Membership
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <FileText className="mr-2 text-rebuild-yellow" />
+                    Blog Posts
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Create and manage blog content
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('blog')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    Manage Blog
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-rebuild-darkgray border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <MessageSquare className="mr-2 text-rebuild-yellow" />
+                    Contact Requests
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    View and respond to customer inquiries
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    onClick={() => setActiveTab('contacts')}
+                    className="w-full bg-rebuild-yellow text-rebuild-black hover:bg-yellow-400"
+                  >
+                    View Contacts
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="gyms" className="mt-6">
+            <AdminGyms />
+          </TabsContent>
+
+          <TabsContent value="trainers" className="mt-6">
+            <AdminTrainers />
+          </TabsContent>
+
+          <TabsContent value="transformations" className="mt-6">
+            <AdminTransformations />
+          </TabsContent>
+
+          <TabsContent value="membership" className="mt-6">
+            <AdminMembership />
+          </TabsContent>
+
+          <TabsContent value="blog" className="mt-6">
+            <AdminBlog />
+          </TabsContent>
+
+          <TabsContent value="contacts" className="mt-6">
+            <AdminContacts />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default Admin;
