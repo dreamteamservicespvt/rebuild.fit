@@ -323,6 +323,49 @@
   }
 }
 
+/* Utility classes for mobile optimization */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-optimized {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.safe-area-insets {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Better mobile viewport handling */
+@supports (-webkit-touch-callout: none) {
+  .ios-scroll-fix {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .crisp-edges {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Prevent zoom on input focus (iOS Safari) */
+@media screen and (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* Custom Trainer Card Animations */
 @keyframes float {
   0%, 100% { 
@@ -1381,70 +1424,91 @@
 
 /* Mobile optimizations */
 @media (max-width: 640px) {
-  .membership-card:hover {
-    transform: translateY(-6px) scale(1.01);
+  .membership-card {
+    scroll-margin-top: 80px;
   }
   
-  .feature-card:hover {
-    transform: translateY(-4px) scale(1.01);
+  .membership-duration-mobile {
+    padding: 16px 20px;
+    border-radius: 12px;
+    touch-action: manipulation;
   }
   
-  /* Reduce animation intensity on mobile */
-  .animate-premium-glow,
-  .animate-premium-glow-enhanced {
-    animation-duration: 4s;
+  .membership-hero-mobile {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+  
+  .membership-text-mobile {
+    line-height: 1.5;
+    letter-spacing: 0.025em;
+  }
+  
+  /* Mobile-first responsive enhancements */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better touch targets for mobile */
+  button, .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent text selection on buttons */
+  button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 }
 
-/* Accessibility - Respect user preferences */
-@media (prefers-reduced-motion: reduce) {
-  .membership-card,
-  .feature-card,
-  .btn-membership,
-  .floating-badge,
-  .pulse-indicator,
-  .particle-float,
-  .border-gradient-animated,
-  .animate-gradient-x,
-  .animate-premium-glow,
-  .animate-premium-glow-enhanced {
-    animation: none !important;
-    transition: opacity 0.3s ease, transform 0.3s ease !important;
+/* Enhanced animations for mobile */
+@keyframes mobile-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
   }
-  
-  .membership-card:hover,
-  .feature-card:hover {
-    transform: scale(1.02) !important;
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .membership-card,
-  .feature-card {
-    border: 2px solid white !important;
-    background: black !important;
-  }
-  
-  .text-rebuild-yellow {
-    color: yellow !important;
-  }
-  
-  .bg-rebuild-yellow {
-    background-color: yellow !important;
-    color: black !important;
+.mobile-scale-in {
+  animation: mobile-scale-in 0.3s ease-out forwards;
+}
+
+/* Touch-friendly hover states */
+@media (hover: hover) {
+  .hover-scale:hover {
+    transform: scale(1.02);
   }
 }
 
-/* Enhanced glassmorphism effects */
-.glass-premium {
-  background: rgba(20, 20, 20, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 243, 24, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+/* Focus styles for accessibility */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 243, 24, 0.5);
+}
+
+/* Custom scrollbar for mobile webkit browsers */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #fff318;
+    border-radius: 2px;
+  }
 }
 
 /* ==========================================
