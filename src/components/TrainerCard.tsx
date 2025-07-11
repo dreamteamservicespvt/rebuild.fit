@@ -48,11 +48,12 @@ const TrainerCard = ({
   };
 
   const handleImageClick = () => {
-    // If slug is available and we're not on a page with booking, navigate to profile
-    if (slug && !onBookClick) {
-      // Profile navigation is handled by the Link wrapper
+    // If slug is available, navigate to profile (this is for images without Link wrapper)
+    if (slug) {
+      window.location.href = `/trainers/${slug}`;
       return;
     }
+    // Fallback to booking scroll
     handleBookingClick();
   };
   
@@ -75,16 +76,15 @@ const TrainerCard = ({
       <div 
         className={cn(
           "relative aspect-[3/4] overflow-hidden bg-white flex items-center justify-center",
-          !slug && "cursor-pointer"
+          slug && "cursor-pointer"
         )}
-        onClick={!slug ? handleImageClick : undefined}
       >
         {slug ? (
-          <Link to={`/trainers/${slug}`} className="w-full h-full">
+          <Link to={`/trainers/${slug}`} className="w-full h-full block">
             <img
               src={image || 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}
               alt={name}
-              className="w-full h-full object-cover transition-transform duration-300"
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
               }}
@@ -94,7 +94,8 @@ const TrainerCard = ({
           <img
             src={image || 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-300"
+            className="w-full h-full object-cover transition-transform duration-300 cursor-pointer hover:scale-105"
+            onClick={handleImageClick}
             onError={(e) => {
               e.currentTarget.src = 'https://images.unsplash.com/photo-1571019613540-996a69725630?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
             }}
