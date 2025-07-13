@@ -14,7 +14,7 @@ I have successfully created a comprehensive Privacy Policy page for Rebuild.Fit 
 ### **2. Page Metadata**
 - **Title**: "Privacy Policy - Rebuild.Fit"
 - **Meta Description**: "Learn how Rebuild.Fit handles your data with transparency and care."
-- Dynamically set using React useEffect
+- Dynamically set using React useEffect 
 
 ### **3. Design System Compliance**
 - **Dark Theme**: Maintains the rebuild-black, rebuild-darkgray color scheme

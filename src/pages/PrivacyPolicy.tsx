@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const PrivacyPolicy = () => {
-  useEffect(() => {
+  useEffect(() => { 
     document.title = "Privacy Policy - Rebuild.Fit";
     
     // Set meta description
