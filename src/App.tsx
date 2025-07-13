@@ -23,6 +23,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 // Payment flow pages
 import PaymentUserInfo from "./pages/PaymentUserInfo";
 import PaymentUPI from "./pages/PaymentUPI";
@@ -100,6 +101,8 @@ const App = () => {
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/blog/:postId" element={<BlogPost />} />
                       <Route path="/contact" element={<Contact />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/privacypolicy" element={<PrivacyPolicy />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
