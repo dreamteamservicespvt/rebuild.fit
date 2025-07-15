@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Volume2, VolumeX } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 const Hero = () => {
   const quotes = [
@@ -162,7 +162,7 @@ const Hero = () => {
           onError={(e) => {/* Mobile video error */}}
         >
           <source 
-            src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
+            src="https://res.cloudinary.com/dvmrhs2ek/video/upload_v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
             type="video/mp4" 
           />
           Your browser does not support the video tag.
@@ -172,13 +172,21 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black opacity-0"></div>
       </div>
       
-      {/* Mute/Unmute Button - fixed icon order to correctly represent state */}
+      {/* Mute/Unmute Button - Premium UI with emoji icons */}
       <button 
         onClick={toggleMute}
-        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 bg-rebuild-yellow text-rebuild-black p-2 sm:p-3 rounded-full transition-all hover:scale-110 shadow-lg"
+        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 
+                   bg-white/95 backdrop-blur-sm text-rebuild-black 
+                   p-3 sm:p-4 rounded-full 
+                   transition-all duration-300 ease-in-out
+                   hover:scale-110 hover:bg-rebuild-yellow hover:shadow-2xl
+                   shadow-lg border-2 border-white/20
+                   active:scale-95"
         aria-label={isMuted ? "Unmute video" : "Mute video"}
       >
-        {isMuted ? <Volume2 size={20} className="sm:w-6 sm:h-6" /> : <VolumeX size={20} className="sm:w-6 sm:h-6" />}
+        <span className="text-xl sm:text-2xl font-bold filter drop-shadow-sm">
+          {isMuted ? "🔇" : "🔊"}
+        </span>
       </button>
       
       {/* Enhanced overlay gradient for better text contrast */}
