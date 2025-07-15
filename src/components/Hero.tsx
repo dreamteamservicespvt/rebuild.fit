@@ -53,11 +53,15 @@ const Hero = () => {
     }
   };
   
-  // Handle autoplay with simplified audio control
+  // Handle autoplay and video state synchronization
   useEffect(() => {
     // Start both videos muted (browsers require this for autoplay)
-    if (desktopVideoRef.current) desktopVideoRef.current.muted = true;
-    if (mobileVideoRef.current) mobileVideoRef.current.muted = true;
+    if (desktopVideoRef.current) {
+      desktopVideoRef.current.muted = isMuted;
+    }
+    if (mobileVideoRef.current) {
+      mobileVideoRef.current.muted = isMuted;
+    }
     
     // Try to autoplay the videos (will work because they're muted)
     const playVideos = async () => {
@@ -66,29 +70,11 @@ const Hero = () => {
         if (mobileVideoRef.current) await mobileVideoRef.current.play();
       } catch (error) {
         // Video autoplay failed - this is expected in some browsers
+        console.log('Video autoplay failed:', error);
       }
     };
     
     playVideos();
-    
-    // Function to enable audio on user interaction
-    const enableAudio = () => {
-      const activeVideo = getActiveVideoRef();
-      if (activeVideo && isMuted) {
-        activeVideo.muted = false;
-        setIsMuted(false);
-        
-        // Remove listeners once audio is enabled
-        document.removeEventListener('scroll', enableAudio);
-        document.removeEventListener('click', enableAudio);
-        document.removeEventListener('touchstart', enableAudio);
-      }
-    };
-    
-    // Add interaction listeners to enable audio
-    document.addEventListener('scroll', enableAudio);
-    document.addEventListener('click', enableAudio);
-    document.addEventListener('touchstart', enableAudio);
     
     // Media query listener to ensure right video is played based on screen size
     const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -97,13 +83,21 @@ const Hero = () => {
         // Desktop view - ensure desktop video is playing with correct muted state
         if (desktopVideoRef.current) {
           desktopVideoRef.current.muted = isMuted;
-          desktopVideoRef.current.play();
+          if (desktopVideoRef.current.paused) {
+            desktopVideoRef.current.play().catch((error) => {
+              console.log('Desktop video play failed:', error);
+            });
+          }
         }
       } else {
         // Mobile view - ensure mobile video is playing with correct muted state
         if (mobileVideoRef.current) {
           mobileVideoRef.current.muted = isMuted;
-          mobileVideoRef.current.play();
+          if (mobileVideoRef.current.paused) {
+            mobileVideoRef.current.play().catch((error) => {
+              console.log('Mobile video play failed:', error);
+            });
+          }
         }
       }
     };
@@ -112,21 +106,35 @@ const Hero = () => {
     mediaQuery.addEventListener('change', handleMediaChange);
     
     return () => {
-      document.removeEventListener('scroll', enableAudio);
-      document.removeEventListener('click', enableAudio);
-      document.removeEventListener('touchstart', enableAudio);
       mediaQuery.removeEventListener('change', handleMediaChange);
     };
-  }, []); // Empty dependency array - we only want this to run once
+  }, [isMuted]); // React to isMuted changes to sync video state
   
-  // Handle manual mute/unmute with simplified logic
+  // Handle manual mute/unmute toggle
   const toggleMute = () => {
     const activeVideo = getActiveVideoRef();
     
     if (activeVideo) {
       const newMutedState = !isMuted;
+      
+      // Update the video muted property
       activeVideo.muted = newMutedState;
+      
+      // Update our state
       setIsMuted(newMutedState);
+      
+      // Ensure video is playing (it should never pause due to mute/unmute)
+      if (activeVideo.paused) {
+        activeVideo.play().catch((error) => {
+          console.log('Video autoplay failed after toggle:', error);
+        });
+      }
+      
+      // Also update the inactive video to keep them in sync
+      const inactiveVideo = window.innerWidth >= 768 ? mobileVideoRef.current : desktopVideoRef.current;
+      if (inactiveVideo) {
+        inactiveVideo.muted = newMutedState;
+      }
     }
   };
 
@@ -141,7 +149,6 @@ const Hero = () => {
           autoPlay
           loop
           playsInline
-          muted
           preload="auto"
           poster="https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?auto=format&fit=crop&q=80&w=1770"
         >
@@ -156,13 +163,12 @@ const Hero = () => {
           autoPlay
           loop
           playsInline
-          muted
           preload="auto"
           poster="https://images.unsplash.com/photo-1605296867724-fa87a8ef53fd?auto=format&fit=crop&q=80&w=1770"
           onError={(e) => {/* Mobile video error */}}
         >
           <source 
-            src="https://res.cloudinary.com/dvmrhs2ek/video/upload_v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
+            src="https://res.cloudinary.com/dvmrhs2ek/video/upload/v1746802131/m2x43bfgesjeqosh8cvw.mp4" 
             type="video/mp4" 
           />
           Your browser does not support the video tag.
@@ -172,22 +178,16 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black opacity-0"></div>
       </div>
       
-      {/* Mute/Unmute Button - Premium UI with emoji icons */}
+      {/* Mute/Unmute Button - Enhanced with clear emoji icons */}
       <button 
         onClick={toggleMute}
-        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 
-                   bg-white/95 backdrop-blur-sm text-rebuild-black 
-                   p-3 sm:p-4 rounded-full 
-                   transition-all duration-300 ease-in-out
-                   hover:scale-110 hover:bg-rebuild-yellow hover:shadow-2xl
-                   shadow-lg border-2 border-white/20
-                   active:scale-95"
-        aria-label={isMuted ? "Unmute video" : "Mute video"}
+        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 bg-rebuild-yellow/90 hover:bg-rebuild-yellow text-rebuild-black p-3 sm:p-4 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-rebuild-yellow/20 shadow-lg backdrop-blur-sm border-2 border-rebuild-yellow"
+        aria-label={isMuted ? "Unmute video background music" : "Mute video background music"}
       >
-        <span className="text-xl sm:text-2xl font-bold filter drop-shadow-sm">
-          {isMuted ? "🔇" : "🔊"}
+        <span className="text-xl sm:text-2xl font-bold select-none">
+          {isMuted ? '🔇' : '🔊'}
         </span>
-      </button> 
+      </button>
       
       {/* Enhanced overlay gradient for better text contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-rebuild-black via-rebuild-black/80 to-black/20 z-10" />
