@@ -187,7 +187,7 @@ const Hero = () => {
         <span className="text-xl sm:text-2xl font-bold filter drop-shadow-sm">
           {isMuted ? "🔇" : "🔊"}
         </span>
-      </button>
+      </button> 
       
       {/* Enhanced overlay gradient for better text contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-rebuild-black via-rebuild-black/80 to-black/20 z-10" />
