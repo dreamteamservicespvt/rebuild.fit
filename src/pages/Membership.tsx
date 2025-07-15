@@ -96,94 +96,94 @@ const Membership = () => {
 
   return (
     <div className="min-h-screen bg-rebuild-black text-white">
-      {/* Hero Section */}
-      <section className="relative py-16 sm:py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section - Premium Design */}
+      <section className="relative pt-20 pb-16 sm:pt-24 sm:pb-20 lg:pt-32 lg:pb-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            {/* Hero Content */}
-            <div className="mb-12 sm:mb-16">
-              <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bebas font-bold mb-4 sm:mb-6 tracking-tight leading-none">
+            
+            {/* Premium Hero Content */}
+            <div className="mb-16 sm:mb-20 lg:mb-24">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bebas font-black mb-6 sm:mb-8 tracking-wider leading-[0.85] text-white">
                 CHOOSE YOUR
-                <span className="block text-rebuild-yellow mt-2">MEMBERSHIP</span>
+                <span className="block text-rebuild-yellow mt-2 sm:mt-4 drop-shadow-lg">MEMBERSHIP</span>
               </h1>
-              <p className="text-lg xs:text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed px-4">
+              <div className="w-24 h-1 bg-rebuild-yellow mx-auto mb-8 sm:mb-10"></div>
+              <p className="text-xl sm:text-2xl lg:text-3xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light tracking-wide">
                 Transform your body naturally with our comprehensive fitness programs designed for lasting results.
               </p>
             </div>
 
-            {/* Duration Selector - Mobile First Design */}
-            <div className="mb-12 sm:mb-16">
-              {/* Mobile: Stack vertically on very small screens */}
-              <div className="xs:hidden flex flex-col gap-3 max-w-xs mx-auto">
+            {/* Premium Duration Selector */}
+            <div className="mb-16 sm:mb-20">
+              
+              {/* Mobile Design - Clean Cards */}
+              <div className="sm:hidden space-y-3 max-w-sm mx-auto">
                 {durationOptions.map((option) => (
                   <button
                     key={option.key}
-                    className={`relative w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 touch-manipulation ${
-                      selectedDuration === option.key
-                        ? 'bg-rebuild-yellow text-rebuild-black shadow-lg transform scale-105'
-                        : 'bg-rebuild-gray text-gray-300 hover:text-white hover:bg-rebuild-lightgray border border-gray-600'
+                    className={`relative w-full group transition-all duration-500 ease-out transform hover:scale-[1.02] ${
+                      selectedDuration === option.key ? 'scale-[1.02]' : ''
                     }`}
                     onClick={() => setSelectedDuration(option.key)}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{option.label}</span>
-                      {option.popular && (
-                        <span className="bg-rebuild-yellow text-rebuild-black px-2 py-1 rounded-full text-xs font-bold">
-                          Popular
+                    <div className={`relative p-5 rounded-2xl border-2 transition-all duration-500 ${
+                      selectedDuration === option.key
+                        ? 'bg-gradient-to-r from-rebuild-yellow to-yellow-400 border-rebuild-yellow shadow-2xl shadow-rebuild-yellow/20'
+                        : 'bg-gray-900/50 border-gray-700 hover:border-gray-600 hover:bg-gray-800/50'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className={`text-lg font-bold tracking-wide ${
+                          selectedDuration === option.key ? 'text-rebuild-black' : 'text-white'
+                        }`}>
+                          {option.label}
                         </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Tablet and larger: Grid layout */}
-              <div className="hidden xs:flex sm:hidden flex-wrap justify-center gap-2 max-w-md mx-auto">
-                {durationOptions.map((option) => (
-                  <button
-                    key={option.key}
-                    className={`relative flex-1 min-w-[120px] py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 touch-manipulation ${
-                      selectedDuration === option.key
-                        ? 'bg-rebuild-yellow text-rebuild-black shadow-lg'
-                        : 'bg-rebuild-gray text-gray-300 hover:text-white hover:bg-rebuild-lightgray border border-gray-600'
-                    }`}
-                    onClick={() => setSelectedDuration(option.key)}
-                  >
-                    {option.popular && selectedDuration !== option.key && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-rebuild-yellow rounded-full"></span>
-                    )}
-                    <div className="text-center">
-                      <div className="text-xs opacity-80 mb-1">{option.popular ? 'Popular' : ''}</div>
-                      <div>{option.label}</div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Desktop: Original pill design but improved */}
-              <div className="hidden sm:flex justify-center">
-                <div className="bg-rebuild-gray rounded-2xl p-3 inline-flex gap-2 shadow-xl border border-gray-700">
-                  {durationOptions.map((option) => (
-                    <button
-                      key={option.key}
-                      className={`relative px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-bold text-sm lg:text-base transition-all duration-300 whitespace-nowrap touch-manipulation ${
-                        selectedDuration === option.key
-                          ? 'bg-rebuild-yellow text-rebuild-black shadow-lg transform scale-105'
-                          : 'text-gray-400 hover:text-white hover:bg-rebuild-lightgray'
-                      }`}
-                      onClick={() => setSelectedDuration(option.key)}
-                    >
-                      {option.popular && selectedDuration !== option.key && (
-                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-rebuild-yellow rounded-full"></span>
-                      )}
-                      <div className="flex flex-col items-center">
                         {option.popular && (
-                          <span className="text-xs opacity-75 mb-1">Popular</span>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider ${
+                            selectedDuration === option.key 
+                              ? 'bg-rebuild-black text-rebuild-yellow'
+                              : 'bg-rebuild-yellow text-rebuild-black'
+                          }`}>
+                            POPULAR
+                          </span>
                         )}
-                        <span>{option.label}</span>
                       </div>
-                    </button>
-                  ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Desktop Design - Premium Pill Selector */}
+              <div className="hidden sm:flex justify-center">
+                <div className="relative bg-gray-900/60 backdrop-blur-sm rounded-3xl p-2 border border-gray-700/50 shadow-2xl">
+                  <div className="flex gap-1">
+                    {durationOptions.map((option) => (
+                      <button
+                        key={option.key}
+                        className={`relative px-8 lg:px-10 py-4 lg:py-5 rounded-2xl font-bold text-base lg:text-lg transition-all duration-500 ease-out transform group ${
+                          selectedDuration === option.key
+                            ? 'bg-gradient-to-r from-rebuild-yellow to-yellow-400 text-rebuild-black shadow-xl shadow-rebuild-yellow/30 scale-105'
+                            : 'text-gray-300 hover:text-white hover:bg-gray-800/50 hover:scale-105'
+                        }`}
+                        onClick={() => setSelectedDuration(option.key)}
+                      >
+                        <div className="flex flex-col items-center relative z-10">
+                          {option.popular && (
+                            <span className={`text-xs font-bold tracking-wider mb-1 transition-colors duration-300 ${
+                              selectedDuration === option.key ? 'text-rebuild-black/70' : 'text-rebuild-yellow'
+                            }`}>
+                              POPULAR
+                            </span>
+                          )}
+                          <span className="tracking-wider">{option.label}</span>
+                        </div>
+                        
+                        {/* Subtle glow effect for active state */}
+                        {selectedDuration === option.key && (
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-rebuild-yellow to-yellow-400 opacity-20 blur-xl"></div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

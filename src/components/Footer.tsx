@@ -55,14 +55,21 @@ const Footer = () => {
               <div className="text-left">
                 <h4 className="text-xl font-bebas tracking-wide mb-3">Quick Links</h4>
                 <ul className="space-y-2">
-                  {['About Us', 'Our Gym', 'Membership Plans', 'Trainers', 'Blog', 'Contact'].map((item) => (
-                    <li key={item}>
+                  {[
+                    { name: 'About Us', path: '/about' },
+                    { name: 'Our Gym', path: '/gyms' },
+                    { name: 'Membership Plans', path: '/membership' },
+                    { name: 'Trainers', path: '/trainers' },
+                    { name: 'Blog', path: '/blog' },
+                    { name: 'Contact', path: '/contact' }
+                  ].map((item) => (
+                    <li key={item.name}>
                       <Link 
-                        to={`/${item.toLowerCase().replace(/\s+/g, '-')}`} 
+                        to={item.path} 
                         className="flex items-center justify-start hover:text-rebuild-yellow transition-colors text-sm"
                       >
                         <ArrowRight size={14} className="mr-2" />
-                        {item}
+                        {item.name}
                       </Link>
                     </li>
                   ))}
@@ -157,14 +164,21 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="grid grid-cols-2 gap-y-3 ml-1">
-              {['About Us', 'Our Gym', 'Membership Plans', 'Trainers', 'Blog', 'Contact'].map((item) => (
-                <li key={item}>
+              {[
+                { name: 'About Us', path: '/about' },
+                { name: 'Our Gym', path: '/gyms' },
+                { name: 'Membership Plans', path: '/membership' },
+                { name: 'Trainers', path: '/trainers' },
+                { name: 'Blog', path: '/blog' },
+                { name: 'Contact', path: '/contact' }
+              ].map((item) => (
+                <li key={item.name}>
                   <Link 
-                    to={`/${item.toLowerCase().replace(/\s+/g, '-')}`} 
+                    to={item.path} 
                     className="flex items-center text-gray-200 hover:text-rebuild-yellow hover:underline transition-colors text-sm"
                   >
                     <ArrowRight size={12} className="mr-1 text-rebuild-yellow" />
-                    {item}
+                    {item.name}
                   </Link>
                 </li>
               ))}
