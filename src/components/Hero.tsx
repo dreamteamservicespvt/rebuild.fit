@@ -138,6 +138,14 @@ const Hero = () => {
     }
   };
 
+  // Handle keyboard accessibility
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleMute();
+    }
+  };
+
   return (
     <section className="relative h-screen flex items-center overflow-hidden">
       {/* Background Video */}
@@ -178,16 +186,163 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black opacity-0"></div>
       </div>
       
-      {/* Mute/Unmute Button - Enhanced with clear emoji icons */}
-      <button 
-        onClick={toggleMute}
-        className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 bg-rebuild-yellow/90 hover:bg-rebuild-yellow text-rebuild-black p-3 sm:p-4 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-rebuild-yellow/20 shadow-lg backdrop-blur-sm border-2 border-rebuild-yellow"
-        aria-label={isMuted ? "Unmute video background music" : "Mute video background music"}
-      >
-        <span className="text-xl sm:text-2xl font-bold select-none">
-          {isMuted ? '🔇' : '🔊'}
-        </span>
-      </button>
+      {/* Premium Mute/Unmute Button - World-class UI/UX */}
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 z-20 group">
+        <button 
+          onClick={toggleMute}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          className="premium-audio-btn glass-morphism relative
+                     p-3 sm:p-4 rounded-2xl transition-all duration-700 ease-out
+                     hover:scale-105 hover:shadow-2xl hover:shadow-white/20
+                     active:scale-95 transform-gpu
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2
+                     before:absolute before:inset-0 before:rounded-2xl 
+                     before:bg-gradient-to-br before:from-white/10 before:to-transparent 
+                     before:opacity-0 hover:before:opacity-100 
+                     before:transition-all before:duration-500
+                     after:absolute after:inset-0 after:rounded-2xl
+                     after:bg-gradient-to-t after:from-black/5 after:to-transparent"
+          aria-label={isMuted ? "Unmute video background music" : "Mute video background music"}
+          role="button"
+          aria-pressed={!isMuted}
+        >
+          {/* Main Icon Container */}
+          <div className="relative w-6 h-6 sm:w-7 sm:h-7 z-10">
+            {/* Unmuted State - Speaker with Animated Sound Waves */}
+            <div className={`absolute inset-0 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${
+              !isMuted 
+                ? 'opacity-100 scale-100 rotate-0' 
+                : 'opacity-0 scale-75 -rotate-12'
+            }`}>
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                className="w-full h-full text-white drop-shadow-lg"
+              >
+                {/* Speaker Base */}
+                <path 
+                  d="M11 5L6 9H2V15H6L11 19V5Z" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  fill="currentColor"
+                  className="opacity-95"
+                />
+                {/* Animated Sound Wave 1 - Outer */}
+                <path 
+                  d="M19.07 4.93C20.65 6.51 21.5 8.67 21.5 11S20.65 16.49 19.07 18.07" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                  className="sound-wave opacity-85"
+                  style={{ 
+                    animationDelay: '0ms', 
+                    animationDuration: '2.5s',
+                    filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.3))'
+                  }}
+                />
+                {/* Animated Sound Wave 2 - Inner */}
+                <path 
+                  d="M15.54 8.46C16.32 9.24 16.75 10.28 16.75 11.36S16.32 13.48 15.54 14.26" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                  className="sound-wave opacity-75"
+                  style={{ 
+                    animationDelay: '300ms', 
+                    animationDuration: '2.5s',
+                    filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.4))'
+                  }}
+                />
+              </svg>
+              
+              {/* Success Glow for Unmuted State */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400/30 to-emerald-400/30 blur-xl opacity-60 animate-pulse"></div>
+            </div>
+
+            {/* Muted State - Speaker with Elegant X */}
+            <div className={`absolute inset-0 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${
+              isMuted 
+                ? 'opacity-100 scale-100 rotate-0' 
+                : 'opacity-0 scale-75 rotate-12'
+            }`}>
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                className="w-full h-full text-white drop-shadow-lg"
+              >
+                {/* Speaker Base */}
+                <path 
+                  d="M11 5L6 9H2V15H6L11 19V5Z" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  fill="currentColor"
+                  className="opacity-95"
+                />
+                {/* Elegant X Mark for Mute */}
+                <g className="opacity-95">
+                  <path 
+                    d="M22 9L16 15" 
+                    stroke="currentColor" 
+                    strokeWidth="2.5" 
+                    strokeLinecap="round"
+                    className="drop-shadow-sm"
+                  />
+                  <path 
+                    d="M16 9L22 15" 
+                    stroke="currentColor" 
+                    strokeWidth="2.5" 
+                    strokeLinecap="round"
+                    className="drop-shadow-sm"
+                  />
+                </g>
+              </svg>
+              
+              {/* Warning Glow for Muted State */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400/25 to-orange-400/25 blur-xl opacity-50 animate-pulse"></div>
+            </div>
+
+            {/* Interactive Ripple Effect */}
+            <div className="absolute inset-0 rounded-full bg-white/30 scale-0 group-active:scale-150 group-active:opacity-0 transition-all duration-500 ease-out opacity-0"></div>
+          </div>
+
+          {/* Status Indicator Ring */}
+          <div className={`absolute -inset-2 rounded-3xl transition-all duration-700 ${
+            !isMuted 
+              ? 'bg-gradient-to-r from-green-400/15 to-emerald-400/15 shadow-green-400/20' 
+              : 'bg-gradient-to-r from-amber-400/15 to-orange-400/15 shadow-amber-400/20'
+          } blur-lg shadow-lg opacity-0 group-hover:opacity-100`}></div>
+
+          {/* Ambient Light Effect */}
+          <div className={`absolute inset-0 rounded-2xl transition-all duration-1000 ${
+            !isMuted 
+              ? 'shadow-[0_0_20px_rgba(34,197,94,0.2)]' 
+              : 'shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+          } opacity-0 group-hover:opacity-100`}></div>
+        </button>
+
+        {/* Premium Tooltip */}
+        <div className="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 
+                        transition-all duration-300 transform translate-y-2 group-hover:translate-y-0
+                        pointer-events-none">
+          <div className="bg-black/80 backdrop-blur-xl text-white text-xs sm:text-sm 
+                          px-3 py-2 rounded-lg font-medium whitespace-nowrap
+                          border border-white/10 shadow-xl">
+            <span className="drop-shadow-sm">
+              {isMuted ? 'Unmute Audio' : 'Mute Audio'}
+            </span>
+            {/* Tooltip Arrow */}
+            <div className="absolute top-full right-4 w-0 h-0 
+                            border-l-[6px] border-l-transparent 
+                            border-r-[6px] border-r-transparent 
+                            border-t-[6px] border-t-black/80"></div>
+          </div>
+        </div>
+      </div>
       
       {/* Enhanced overlay gradient for better text contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-rebuild-black via-rebuild-black/80 to-black/20 z-10" />

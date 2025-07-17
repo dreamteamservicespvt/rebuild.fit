@@ -60,3 +60,140 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+/* Premium Mute/Unmute Button Animations - World-class UI/UX */
+@keyframes soundWave {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes subtleGlow {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@keyframes buttonBreath {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes rippleEffect {
+  0% { transform: scale(0); opacity: 0.8; }
+  50% { opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes statusIndicator {
+  0% { opacity: 0.5; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.5; transform: scale(0.95); }
+}
+
+/* Premium button hover effects */
+.premium-audio-btn {
+  animation: buttonBreath 4s ease-in-out infinite;
+}
+
+.premium-audio-btn:hover {
+  animation: subtleFloat 3s ease-in-out infinite, premiumGlow 2s ease-in-out infinite;
+}
+
+.premium-audio-btn .sound-wave {
+  animation: soundWave 2s ease-in-out infinite;
+}
+
+.premium-audio-btn .sound-wave:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.premium-audio-btn .sound-wave:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Additional premium touch animations for world-class UX */
+@keyframes subtleFloat {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-2px); 
+  }
+}
+
+@keyframes premiumGlow {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0.2);
+    filter: brightness(1.1);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1);
+    filter: brightness(1);
+  }
+}
+
+/* Smooth state transitions */
+.premium-audio-btn * {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus state for accessibility */
+.premium-audio-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure smooth performance */
+.premium-audio-btn, 
+.premium-audio-btn * {
+  backface-visibility: hidden;
+  perspective: 1000;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Glass morphism effect for modern look */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Elegant fade transitions */
+.elegant-fade-in {
+  animation: elegantFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.elegant-fade-out {
+  animation: elegantFadeOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes elegantFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes elegantFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+}

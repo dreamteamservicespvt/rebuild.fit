@@ -81,7 +81,8 @@ const AdminTransformationCard: React.FC<AdminTransformationCardProps> = ({
                   <ResponsiveImage 
                     src={transformation.beforeImage} 
                     alt={`Before - ${transformation.name}`} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
+                    preserveAspectRatio={true}
                   />
                   <div className="absolute bottom-1 left-1 bg-black/70 text-white px-1.5 py-0.5 rounded text-xs font-medium">
                     BEFORE
@@ -95,7 +96,8 @@ const AdminTransformationCard: React.FC<AdminTransformationCardProps> = ({
                   <ResponsiveImage 
                     src={transformation.afterImage} 
                     alt={`After - ${transformation.name}`} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
+                    preserveAspectRatio={true}
                   />
                   <div className="absolute bottom-1 right-1 bg-rebuild-yellow text-black px-1.5 py-0.5 rounded text-xs font-bold">
                     AFTER

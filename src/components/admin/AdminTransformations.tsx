@@ -500,7 +500,8 @@ const AdminTransformations = () => {
                               <ResponsiveImage 
                                 src={transformation.beforeImage} 
                                 alt={`Before - ${transformation.name}`} 
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
+                                preserveAspectRatio={true}
                               />
                             </div>
                           )}
@@ -509,7 +510,8 @@ const AdminTransformations = () => {
                               <ResponsiveImage 
                                 src={transformation.afterImage} 
                                 alt={`After - ${transformation.name}`} 
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
+                                preserveAspectRatio={true}
                               />
                             </div>
                           )}

@@ -38,7 +38,8 @@ const TransformationCard = ({
           <ResponsiveImage 
             src={beforeImage} 
             alt={`${name} before transformation`} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+            preserveAspectRatio={true}
           />
           {/* Minimal overlay - just for label visibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
@@ -52,7 +53,8 @@ const TransformationCard = ({
           <ResponsiveImage 
             src={afterImage} 
             alt={`${name} after transformation`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+            preserveAspectRatio={true}
           />
           {/* Minimal overlay - just for label visibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
