@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -6,7 +6,9 @@ import { cn } from '@/lib/utils';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navHeight, setNavHeight] = useState(0);
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +22,26 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Calculate navbar height dynamically
+  useEffect(() => {
+    const updateNavHeight = () => {
+      if (navRef.current) {
+        setNavHeight(navRef.current.offsetHeight);
+      }
+    };
+
+    updateNavHeight();
+    window.addEventListener('resize', updateNavHeight);
+    
+    // Update height after scroll state changes
+    const timeoutId = setTimeout(updateNavHeight, 100);
+    
+    return () => {
+      window.removeEventListener('resize', updateNavHeight);
+      clearTimeout(timeoutId);
+    };
+  }, [scrolled]);
 
   // Add effect to prevent background scrolling when menu is open
   useEffect(() => {
@@ -60,25 +82,38 @@ const Navbar = () => {
 
   return (
     <nav 
+      ref={navRef}
       className={cn(
-        'fixed w-full z-50 transition-all duration-300',
-        scrolled ? 'bg-rebuild-black/90 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-2 sm:py-4'
+        'fixed w-full z-50 transition-all duration-300 mobile-navbar',
+        scrolled 
+          ? 'mobile-navbar-scrolled shadow-lg py-1 sm:py-2' 
+          : 'bg-transparent py-2 sm:py-3 md:py-4'
       )}
     >
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 flex justify-between items-center">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 mobile-navbar-container">
         <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
           <div className="relative overflow-hidden">
             <img 
               src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747470571/cmvlwiujoqiloeitncik.png" 
               alt="Rebuild.fit Logo" 
-              className="h-10 sm:h-12 md:h-16 w-auto transition-transform duration-300 group-hover:scale-110" 
+              className={cn(
+                "w-auto transition-all duration-300 group-hover:scale-110",
+                scrolled 
+                  ? "h-8 sm:h-10 md:h-12" 
+                  : "h-10 sm:h-12 md:h-16"
+              )}
             />
             <div className="absolute inset-0 bg-rebuild-yellow/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
           </div>
           <img
             src="https://res.cloudinary.com/dvmrhs2ek/image/upload/v1747482873/lissllpnwgq5z2hu7ukz.png"
             alt="Rebuild Logo"
-            className="h-6 sm:h-8 md:h-10 w-auto transition-all duration-300"
+            className={cn(
+              "w-auto transition-all duration-300",
+              scrolled 
+                ? "h-5 sm:h-6 md:h-8" 
+                : "h-6 sm:h-8 md:h-10"
+            )}
           />
         </Link>
 
@@ -105,29 +140,36 @@ const Navbar = () => {
 
         {/* Mobile Navigation Toggle */}
         <button 
-          className="lg:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors"
+          className="lg:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors touch-manipulation min-w-[40px] min-h-[40px] flex items-center justify-center"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <Menu size={20} className="sm:w-6 sm:h-6" />}
+          {isOpen ? (
+            <X size={20} className="sm:w-6 sm:h-6" /> 
+          ) : (
+            <Menu size={20} className="sm:w-6 sm:h-6" />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out overflow-y-auto",
+          "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out overflow-y-auto mobile-menu-overlay",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
-        style={{ top: scrolled ? '56px' : '64px', height: scrolled ? 'calc(100vh - 56px)' : 'calc(100vh - 64px)' }}
+        style={{ 
+          top: navHeight > 0 ? `${navHeight}px` : (scrolled ? '48px' : '56px'), 
+          height: navHeight > 0 ? `calc(100vh - ${navHeight}px)` : (scrolled ? 'calc(100vh - 48px)' : 'calc(100vh - 56px)')
+        }}
       >
-        <div className="flex flex-col space-y-4 sm:space-y-6 p-4 sm:p-6 min-h-full pb-20">
+        <div className="flex flex-col space-y-4 sm:space-y-6 p-4 sm:p-6 min-h-full pb-20 pt-6 safe-area-insets">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={cn(
-                "text-lg sm:text-xl font-bebas tracking-wider py-2 transition-colors border-b border-white/10 last:border-b-0",
+                "text-lg sm:text-xl font-bebas tracking-wider py-3 transition-colors border-b border-white/10 last:border-b-0 touch-manipulation",
                 isActive(link.path) 
                   ? "text-rebuild-yellow" 
                   : "text-white/80 hover:text-rebuild-yellow"
@@ -139,7 +181,7 @@ const Navbar = () => {
           ))}
           <Link 
             to="/membership" 
-            className="btn-primary mt-4 sm:mt-6 text-center py-3 sm:py-4 text-sm sm:text-base"
+            className="btn-primary mt-6 sm:mt-8 text-center py-4 text-base font-semibold touch-manipulation"
             onClick={closeMenu}
           >
             JOIN NOW
