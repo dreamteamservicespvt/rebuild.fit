@@ -65,6 +65,11 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
+  // Close menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -152,40 +157,60 @@ const Navbar = () => {
         </button>
       </div>
 
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-35 lg:hidden"
+          onClick={closeMenu}
+          style={{ 
+            top: navHeight > 0 ? `${navHeight}px` : (scrolled ? '48px' : '56px')
+          }}
+        />
+      )}
+
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed inset-0 bg-rebuild-black z-40 lg:hidden transition-transform duration-300 ease-in-out overflow-y-auto mobile-menu-overlay",
-          isOpen ? "translate-x-0" : "translate-x-full"
+          "fixed right-0 bg-rebuild-black z-40 lg:hidden transition-all duration-300 ease-out overflow-y-auto mobile-menu-panel shadow-2xl",
+          isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         )}
         style={{ 
           top: navHeight > 0 ? `${navHeight}px` : (scrolled ? '48px' : '56px'), 
-          height: navHeight > 0 ? `calc(100vh - ${navHeight}px)` : (scrolled ? 'calc(100vh - 48px)' : 'calc(100vh - 56px)')
+          height: navHeight > 0 ? `calc(100vh - ${navHeight}px)` : (scrolled ? 'calc(100vh - 48px)' : 'calc(100vh - 56px)'),
+          width: '280px',
+          maxWidth: '85vw'
         }}
       >
-        <div className="flex flex-col space-y-4 sm:space-y-6 p-4 sm:p-6 min-h-full pb-20 pt-6 safe-area-insets">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={cn(
-                "text-lg sm:text-xl font-bebas tracking-wider py-3 transition-colors border-b border-white/10 last:border-b-0 touch-manipulation",
-                isActive(link.path) 
-                  ? "text-rebuild-yellow" 
-                  : "text-white/80 hover:text-rebuild-yellow"
-              )}
+        <div className="flex flex-col h-full px-6 py-6 safe-area-insets">
+          {/* Navigation Menu Items */}
+          <div className="flex flex-col space-y-1">
+            {navLinks.map((link, index) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={cn(
+                  "text-left text-lg font-semibold py-4 px-2 transition-all duration-200 rounded-md border-b border-white/10 last:border-b-0 touch-manipulation",
+                  isActive(link.path) 
+                    ? "text-rebuild-yellow bg-rebuild-yellow/10 border-l-4 border-l-rebuild-yellow" 
+                    : "text-white/90 hover:text-rebuild-yellow hover:bg-white/5"
+                )}
+                onClick={closeMenu}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+          
+          {/* Join Now Button - Sticky to Bottom */}
+          <div className="mt-auto pt-6">
+            <Link 
+              to="/membership" 
+              className="btn-primary w-full text-center py-4 text-base font-semibold touch-manipulation rounded-lg"
               onClick={closeMenu}
             >
-              {link.name}
+              JOIN NOW
             </Link>
-          ))}
-          <Link 
-            to="/membership" 
-            className="btn-primary mt-6 sm:mt-8 text-center py-4 text-base font-semibold touch-manipulation"
-            onClick={closeMenu}
-          >
-            JOIN NOW
-          </Link>
+          </div>
         </div>
       </div>
     </nav>
